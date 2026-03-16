@@ -1,0 +1,232 @@
+/* ── Desktop / Tablet: horizontal pill row ── */
+.tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  animation: slideIn 0.6s ease-out 0.3s both;
+  width: 100%;
+}
+
+.tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 8px;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: rgba(255, 255, 255, 0.65);
+  border: 1.5px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  position: relative;
+  overflow: hidden;
+  min-height: 64px;
+}
+
+.tab-icon {
+  font-size: 1.3rem;
+  line-height: 1;
+  transition: transform 0.3s ease;
+}
+
+.tab-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  line-height: 1;
+}
+
+.tab:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #ffffff;
+  transform: translateY(-3px);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
+.tab:hover .tab-icon {
+  transform: scale(1.2);
+}
+
+.tab.active {
+  background: #ffffff;
+  color: #000000;
+  border-color: rgba(255, 255, 255, 0.4);
+  transform: translateY(-4px);
+  box-shadow:
+    0 10px 28px rgba(255, 255, 255, 0.25),
+    0 0 0 1px rgba(255, 255, 255, 0.3) inset;
+}
+
+.tab.active .tab-icon,
+.tab.active .tab-label {
+  color: #000000 !important;
+  -webkit-text-fill-color: #000000 !important;
+}
+
+.tab.active .tab-icon {
+  transform: scale(1.15);
+}
+
+.tab.active .tab-label {
+  font-weight: 800;
+}
+
+/* ─────────────────────────────────────────────
+   MOBILE: Diamond / Pentagon jewel layout
+   
+   Layout (5 tabs):
+   
+       [Rewards]  [Vouchers]      ← row 1 (2 tabs, offset inward)
+          [  History  ]           ← row 2 (1 large center gem)
+       [Leaders]  [Secret]        ← row 3 (2 tabs, offset inward)
+   
+───────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 10px;
+    margin-bottom: 20px;
+    padding: 4px;
+  }
+
+  .tab {
+    flex-direction: column;
+    gap: 5px;
+    padding: 14px 8px;
+    border-radius: 18px;
+    min-height: 72px;
+    transform: none;
+  }
+
+  /* Row 1: Rewards + Vouchers */
+  .tab:nth-child(1) {
+    grid-column: 1;
+    grid-row: 1;
+    border-radius: 20px 8px 8px 20px;
+  }
+
+  .tab:nth-child(2) {
+    grid-column: 2;
+    grid-row: 1;
+    border-radius: 8px 20px 20px 8px;
+  }
+
+  /* Row 2: History — full-width center gem */
+  .tab:nth-child(3) {
+    grid-column: 1 / 3;
+    grid-row: 2;
+    flex-direction: row;
+    gap: 12px;
+    padding: 18px 24px;
+    min-height: 64px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    justify-content: center;
+  }
+
+  .tab:nth-child(3) .tab-icon {
+    font-size: 1.6rem;
+  }
+
+  .tab:nth-child(3) .tab-label {
+    font-size: 12px;
+    letter-spacing: 1px;
+  }
+
+  .tab:nth-child(3).active {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  .tab:nth-child(3).active .tab-icon,
+  .tab:nth-child(3).active .tab-label {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+
+  .tab.active .tab-icon,
+  .tab.active .tab-label {
+    color: #000000 !important;
+    -webkit-text-fill-color: #000000 !important;
+  }
+
+  /* Row 3: Leaderboard + Secret */
+  .tab:nth-child(4) {
+    grid-column: 1;
+    grid-row: 3;
+    border-radius: 20px 8px 8px 20px;
+  }
+
+  .tab:nth-child(5) {
+    grid-column: 2;
+    grid-row: 3;
+    border-radius: 8px 20px 20px 8px;
+  }
+
+  /* Corner tabs get a subtle diagonal cut feel via asymmetric radius */
+  .tab:nth-child(1),
+  .tab:nth-child(4) {
+    border-top-left-radius: 24px;
+    border-bottom-left-radius: 24px;
+    border-top-right-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+
+  .tab:nth-child(2),
+  .tab:nth-child(5) {
+    border-top-right-radius: 24px;
+    border-bottom-right-radius: 24px;
+    border-top-left-radius: 8px;
+    border-bottom-left-radius: 8px;
+  }
+
+  .tab:hover {
+    transform: scale(1.03);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+  }
+
+  .tab.active {
+    transform: scale(1.04);
+    box-shadow:
+      0 8px 24px rgba(255, 255, 255, 0.2),
+      0 0 0 2px rgba(255, 255, 255, 0.4) inset;
+  }
+
+  .tab-icon { font-size: 1.4rem; }
+  .tab-label { font-size: 9px; letter-spacing: 0.5px; }
+}
+
+/* ── Small phones ── */
+@media (max-width: 380px) {
+  .tabs { gap: 8px; }
+
+  .tab { min-height: 64px; padding: 12px 6px; }
+
+  .tab:nth-child(3) {
+    padding: 14px 16px;
+    min-height: 56px;
+  }
+
+  .tab-icon { font-size: 1.2rem; }
+  .tab-label { font-size: 8px; }
+}
+
+/* ── Tablet ── */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .tab {
+    min-height: 60px;
+    padding: 12px 6px;
+  }
+  .tab-icon { font-size: 1.2rem; }
+  .tab-label { font-size: 9px; }
+}

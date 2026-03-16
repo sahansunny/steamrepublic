@@ -1,0 +1,94 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isValidEmail(email) {
+      return email.matches('.*@.*\\..*');
+    }
+    
+    function isValidMobile(mobile) {
+      return mobile.matches('[0-9]{10}');
+    }
+    
+    // Users collection - customers
+    match /users/{userId} {
+      // Anyone can read user data (for leaderboard)
+      allow read: if true;
+      
+      // Allow creating new users with valid data
+      allow create: if request.resource.data.keys().hasAll(['id', 'name', 'mobile', 'email', 'coins', 'visits', 'streak', 'createdAt'])
+                    && request.resource.data.mobile is string
+                    && request.resource.data.mobile.size() == 10
+                    && request.resource.data.email is string
+                    && isValidEmail(request.resource.data.email)
+                    && request.resource.data.coins == 0
+                    && request.resource.data.visits == 0
+                    && request.resource.data.id == 'USER' + request.resource.data.mobile;
+      
+      // Allow all updates for now (we'll add proper validation later)
+      allow update: if true;
+      
+      // No one can delete users
+      allow delete: if false;
+      
+      // User history subcollection
+      match /history/{historyId} {
+        allow read: if true;
+        // Allow creating any history entries
+        allow create: if true;
+        allow update, delete: if false;
+      }
+    }
+    
+    // Admins collection - staff
+    match /admins/{adminId} {
+      // Admins can read all admin data
+      allow read: if true;
+      
+      // Allow creating admin accounts
+      // TODO: In production, restrict this after first admin is created
+      allow create: if request.resource.data.keys().hasAll(['id', 'name', 'email', 'password', 'role', 'createdAt', 'active'])
+                    && request.resource.data.email is string
+                    && isValidEmail(request.resource.data.email)
+                    && request.resource.data.password is string
+                    && request.resource.data.password.size() >= 6
+                    && request.resource.data.role in ['staff', 'manager', 'owner'];
+      
+      // Admins can update their own data
+      allow update: if request.resource.data.email == resource.data.email;
+      
+      // No one can delete admins
+      allow delete: if false;
+    }
+    
+    // Redemptions collection - vouchers
+    match /redemptions/{redemptionId} {
+      // Allow all operations for now
+      allow read, write: if true;
+    }
+    
+    // Purchase codes
+    match /purchaseCodes/{codeId} {
+      // Anyone can read codes (needed for validation)
+      allow read: if true;
+      
+      // Allow creating codes
+      allow create: if request.resource.data.keys().hasAll(['code', 'coins', 'used', 'createdAt'])
+                    && request.resource.data.coins > 0
+                    && request.resource.data.used == false;
+      
+      // Only allow marking as used (one-time use)
+      allow update: if request.resource.data.used == true 
+                    && resource.data.used == false
+                    && request.resource.data.keys().hasAll(['usedBy', 'usedAt']);
+      
+      // No one can delete codes (keep for audit trail)
+      allow delete: if false;
+    }
+  }
+}

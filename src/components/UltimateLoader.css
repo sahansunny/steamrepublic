@@ -1,0 +1,221 @@
+.ultimate-loader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  color: var(--text-primary);
+  position: relative;
+  overflow: hidden;
+}
+
+.loader-container {
+  position: relative;
+  width: 200px;
+  height: 200px;
+  margin-bottom: 32px;
+}
+
+.loader-rings {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ring {
+  position: absolute;
+  border-radius: 50%;
+  border: 3px solid transparent;
+  animation: ringRotate 3s linear infinite;
+}
+
+.ring-1 {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-top-color: var(--accent-blue);
+  border-right-color: var(--accent-blue);
+  animation-duration: 2s;
+}
+
+.ring-2 {
+  top: 20px;
+  left: 20px;
+  width: calc(100% - 40px);
+  height: calc(100% - 40px);
+  border-bottom-color: var(--accent-purple);
+  border-left-color: var(--accent-purple);
+  animation-duration: 2.5s;
+  animation-direction: reverse;
+}
+
+.ring-3 {
+  top: 40px;
+  left: 40px;
+  width: calc(100% - 80px);
+  height: calc(100% - 80px);
+  border-top-color: var(--accent-pink);
+  border-bottom-color: var(--accent-pink);
+  animation-duration: 3s;
+}
+
+.loader-logo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: logoFloat 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.8));
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.loader-logo-image {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 215, 0, 0.6);
+  box-shadow: 
+    0 0 20px rgba(255, 215, 0, 0.6),
+    0 0 40px rgba(0, 255, 255, 0.3),
+    inset 0 0 15px rgba(255, 255, 255, 0.1);
+  filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.6));
+  background: rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+}
+
+.loader-text {
+  font-family: 'Orbitron', 'Inter', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  background: var(--gold-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  animation: textGlow 2s ease-in-out infinite;
+  margin-bottom: 40px;
+}
+
+.loader-particles {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+.loader-particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--gold-gradient);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform-origin: 0 150px;
+  animation: particleOrbit 4s linear infinite;
+  animation-delay: var(--delay);
+  box-shadow: 0 0 10px rgba(255, 215, 0, 0.6);
+}
+
+.loader-particle::before {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: inherit;
+  border-radius: 50%;
+  animation: particlePulse 1s ease-in-out infinite;
+  animation-delay: var(--delay);
+}
+
+@keyframes ringRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes logoFloat {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1) rotateY(0deg);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.1) rotateY(180deg);
+  }
+}
+
+@keyframes textGlow {
+  0%, 100% {
+    text-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  }
+  50% {
+    text-shadow: 0 0 40px rgba(255, 215, 0, 0.8), 0 0 60px rgba(102, 126, 234, 0.3);
+  }
+}
+
+@keyframes particleOrbit {
+  0% {
+    transform: rotate(var(--angle)) translateX(150px) rotate(calc(-1 * var(--angle)));
+  }
+  100% {
+    transform: rotate(calc(var(--angle) + 360deg)) translateX(150px) rotate(calc(-1 * (var(--angle) + 360deg)));
+  }
+}
+
+@keyframes particlePulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.5);
+    opacity: 0.7;
+  }
+}
+
+@media (max-width: 600px) {
+  .loader-container {
+    width: 150px;
+    height: 150px;
+  }
+  
+  .loader-logo-image {
+    width: 60px;
+    height: 60px;
+  }
+  
+  .loader-text {
+    font-size: 1.2rem;
+    padding: 0 20px;
+  }
+  
+  .loader-particles {
+    width: 200px;
+    height: 200px;
+  }
+  
+  .loader-particle {
+    transform-origin: 0 100px;
+  }
+  
+  @keyframes particleOrbit {
+    0% {
+      transform: rotate(var(--angle)) translateX(100px) rotate(calc(-1 * var(--angle)));
+    }
+    100% {
+      transform: rotate(calc(var(--angle) + 360deg)) translateX(100px) rotate(calc(-1 * (var(--angle) + 360deg)));
+    }
+  }
+}

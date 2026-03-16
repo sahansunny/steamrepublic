@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Firebase Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .test-box {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 5px;
+        }
+        button:hover {
+            background: #5568d3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        input {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-box">
+        <h1>🔥 Firebase Connection Test</h1>
+        <p>This will test if Firebase is properly configured.</p>
+        
+        <button onclick="testConnection()">1. Test Connection</button>
+        <button onclick="testFirestore()">2. Test Firestore</button>
+        
+        <h3>Create Test User:</h3>
+        <input type="text" id="testName" placeholder="Name" value="Test User">
+        <input type="tel" id="testMobile" placeholder="Mobile (10 digits)" value="9999999999">
+        <input type="email" id="testEmail" placeholder="Email" value="test@test.com">
+        <button onclick="createTestUser()">3. Create Test User</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js';
+        import { getFirestore, collection, addDoc, setDoc, doc, getDocs } from 'https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js';
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyAT7UdPXg6ACCoHGFEOTmzw7BEBI06Z2JI",
+            authDomain: "momocoins-1c768.firebaseapp.com",
+            projectId: "momocoins-1c768",
+            storageBucket: "momocoins-1c768.firebasestorage.app",
+            messagingSenderId: "951460304576",
+            appId: "1:951460304576:web:007ecc916f8614f6b8ff25",
+            measurementId: "G-TVD9WLW7PG"
+        };
+
+        let app, db;
+        
+        function showResult(message, type = 'info') {
+            const resultDiv = document.getElementById('result');
+            resultDiv.className = `result ${type}`;
+            resultDiv.textContent = message;
+        }
+
+        window.testConnection = async function() {
+            try {
+                showResult('Testing Firebase connection...', 'info');
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                showResult('✅ SUCCESS!\n\nFirebase connected successfully!\nProject ID: ' + firebaseConfig.projectId, 'success');
+            } catch (error) {
+                showResult('❌ ERROR!\n\n' + error.message + '\n\nCode: ' + error.code, 'error');
+            }
+        }
+
+        window.testFirestore = async function() {
+            try {
+                if (!db) {
+                    app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                }
+                
+                showResult('Testing Firestore access...', 'info');
+                
+                // Try to read from users collection
+                const usersRef = collection(db, 'users');
+                const snapshot = await getDocs(usersRef);
+                
+                showResult('✅ SUCCESS!\n\nFirestore is accessible!\nExisting users: ' + snapshot.size, 'success');
+            } catch (error) {
+                let errorMsg = '❌ ERROR!\n\n' + error.message;
+                
+                if (error.code === 'permission-denied') {
+                    errorMsg += '\n\n⚠️ SOLUTION:\n1. Go to Firebase Console\n2. Click "Firestore Database"\n3. Click "Rules" tab\n4. Change to:\n\nrules_version = \'2\';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if true;\n    }\n  }\n}\n\n5. Click "Publish"';
+                } else if (error.code === 'unavailable') {
+                    errorMsg += '\n\n⚠️ SOLUTION:\nFirestore is not enabled!\n1. Go to Firebase Console\n2. Click "Firestore Database"\n3. Click "Create database"\n4. Choose "Test mode"\n5. Select region and enable';
+                }
+                
+                showResult(errorMsg, 'error');
+            }
+        }
+
+        window.createTestUser = async function() {
+            try {
+                if (!db) {
+                    app = initializeApp(firebaseConfig);
+                    db = getFirestore(app);
+                }
+                
+                const name = document.getElementById('testName').value;
+                const mobile = document.getElementById('testMobile').value;
+                const email = document.getElementById('testEmail').value;
+                
+                if (!name || !mobile || !email) {
+                    showResult('❌ Please fill all fields!', 'error');
+                    return;
+                }
+                
+                if (mobile.length !== 10) {
+                    showResult('❌ Mobile number must be 10 digits!', 'error');
+                    return;
+                }
+                
+                showResult('Creating user...', 'info');
+                
+                const userId = `USER${mobile}`;
+                
+                await setDoc(doc(db, 'users', userId), {
+                    id: userId,
+                    name: name,
+                    mobile: mobile,
+                    email: email,
+                    coins: 0,
+                    visits: 0,
+                    streak: 0,
+                    createdAt: new Date().toISOString(),
+                    lastClaimDate: '',
+                    claimsToday: 0
+                });
+                
+                showResult('✅ SUCCESS!\n\nUser created successfully!\nUser ID: ' + userId + '\n\nCheck Firebase Console → Firestore Database\nYou should see: users/' + userId, 'success');
+            } catch (error) {
+                showResult('❌ ERROR!\n\n' + error.message + '\n\nCode: ' + error.code, 'error');
+            }
+        }
+    </script>
+</body>
+</html>

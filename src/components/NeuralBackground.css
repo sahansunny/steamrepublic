@@ -1,0 +1,48 @@
+.neural-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.3;
+}
+
+.neural-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.neural-connection {
+  stroke: url(#neuralGradient);
+  stroke-width: 1;
+  opacity: 0.6;
+  animation: neuralPulse 3s ease-in-out infinite;
+}
+
+.neural-node {
+  fill: #00ffff;
+  filter: drop-shadow(0 0 10px #00ffff);
+  animation: nodeGlow 2s ease-in-out infinite alternate;
+}
+
+@keyframes neuralPulse {
+  0%, 100% {
+    stroke-opacity: 0.3;
+    stroke-width: 1;
+  }
+  50% {
+    stroke-opacity: 0.8;
+    stroke-width: 2;
+  }
+}
+
+@keyframes nodeGlow {
+  0% {
+    filter: drop-shadow(0 0 5px #00ffff);
+  }
+  100% {
+    filter: drop-shadow(0 0 20px #00ffff) drop-shadow(0 0 30px #ff00ff);
+  }
+}

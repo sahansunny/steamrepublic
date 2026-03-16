@@ -1,0 +1,301 @@
+.claim-coins {
+  animation: fadeIn 0.8s ease-out;
+  position: relative;
+}
+
+.claim-header {
+  margin-bottom: 32px;
+}
+
+.back-btn {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  padding: 12px 24px;
+  border-radius: 16px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 14px;
+  position: relative;
+  overflow: hidden;
+}
+
+.back-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.back-btn:hover {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(-2px) translateZ(5px);
+  box-shadow: 
+    0 8px 25px rgba(0, 0, 0, 0.15),
+    0 0 20px rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+.back-btn:hover::before {
+  left: 100%;
+}
+
+.claim-content {
+  background: var(--glass-bg);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  padding: 48px 40px;
+  border-radius: 28px;
+  text-align: center;
+  box-shadow: var(--shadow-premium);
+  border: 1px solid var(--glass-border);
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.claim-content::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%, rgba(255, 255, 255, 0.05) 100%);
+  border-radius: 28px;
+  pointer-events: none;
+}
+
+.claim-content:hover {
+  transform: translateY(-5px) rotateX(2deg);
+  box-shadow: 
+    var(--shadow-premium),
+    var(--shadow-glow);
+}
+
+.claim-icon {
+  font-size: 100px;
+  margin-bottom: 24px;
+  animation: rotate3D 8s linear infinite;
+  filter: drop-shadow(0 0 30px rgba(255, 215, 0, 0.6));
+  position: relative;
+  z-index: 1;
+}
+
+.claim-content h2 {
+  font-family: 'Orbitron', 'Inter', sans-serif;
+  color: #ffffff !important;
+  margin-bottom: 12px;
+  font-size: 2.2em;
+  font-weight: 800;
+  text-shadow: 0 0 30px rgba(255, 215, 0, 0.4);
+  position: relative;
+  z-index: 1;
+}
+
+.claim-subtitle {
+  color: #ffffff !important;
+  margin-bottom: 36px;
+  font-size: 1.1em;
+  font-weight: 500;
+  position: relative;
+  z-index: 1;
+}
+
+.code-input-container {
+  margin-bottom: 28px;
+  position: relative;
+  z-index: 1;
+}
+
+.code-input {
+  width: 100%;
+  padding: 24px 20px;
+  font-size: 28px;
+  font-weight: 800;
+  text-align: center;
+  letter-spacing: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.15);
+  border-radius: 20px;
+  text-transform: uppercase;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: 'Orbitron', monospace;
+}
+
+.code-input::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+  letter-spacing: 8px;
+}
+
+.code-input:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 
+    0 0 0 3px rgba(102, 126, 234, 0.2),
+    0 8px 25px rgba(102, 126, 234, 0.15);
+  transform: translateY(-3px) translateZ(10px);
+}
+
+.code-input:disabled {
+  background: rgba(255, 255, 255, 0.02);
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.error-message {
+  color: #ff6b6b;
+  margin-top: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  background: rgba(255, 107, 107, 0.1);
+  padding: 12px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 107, 107, 0.2);
+}
+
+.claim-btn {
+  width: 100%;
+  padding: 22px;
+  font-size: 18px;
+  font-weight: 700;
+  background: var(--gold-gradient);
+  color: #1a1a2e;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  margin-bottom: 36px;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 
+    0 8px 25px rgba(255, 215, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  overflow: hidden;
+  transform-style: preserve-3d;
+  z-index: 1;
+}
+
+.claim-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+  transition: left 0.5s;
+}
+
+.claim-btn:hover:not(:disabled) {
+  transform: translateY(-4px) translateZ(15px);
+  box-shadow: 
+    0 15px 40px rgba(255, 215, 0, 0.4),
+    0 0 30px rgba(255, 215, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+}
+
+.claim-btn:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.claim-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.claim-info {
+  text-align: left;
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  padding: 28px;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  position: relative;
+  z-index: 1;
+}
+
+.claim-info h3 {
+  color: #ffffff !important;
+  margin-bottom: 20px;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.claim-info ol {
+  margin-left: 24px;
+  color: #ffffff !important;
+  line-height: 1.8;
+}
+
+.claim-info ol li {
+  margin-bottom: 12px;
+  font-weight: 500;
+}
+
+.limit-note {
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba(255, 193, 7, 0.1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-radius: 16px;
+  color: #ffc107;
+  font-size: 14px;
+  text-align: center;
+  font-weight: 600;
+  border: 1px solid rgba(255, 193, 7, 0.2);
+}
+
+@media (max-width: 600px) {
+  .claim-content {
+    padding: 36px 28px;
+    border-radius: 24px;
+  }
+  
+  .claim-icon {
+    font-size: 80px;
+  }
+  
+  .claim-content h2 {
+    font-size: 1.8em;
+  }
+  
+  .code-input {
+    padding: 20px 16px;
+    font-size: 24px;
+    letter-spacing: 8px;
+    border-radius: 16px;
+  }
+  
+  .claim-btn {
+    padding: 18px;
+    font-size: 16px;
+    border-radius: 18px;
+  }
+  
+  .claim-info {
+    padding: 24px;
+    border-radius: 16px;
+  }
+}

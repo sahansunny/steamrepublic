@@ -1,0 +1,81 @@
+.barcode-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 16px 0;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(0, 0, 0, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+}
+
+.barcode-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 40px rgba(0, 0, 0, 0.4),
+    0 0 0 1px rgba(255, 255, 255, 0.2) inset;
+}
+
+.barcode-canvas {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background: #ffffff;
+  padding: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.barcode-canvas.square-barcode {
+  border-radius: 8px;
+  padding: 12px;
+  box-shadow: 
+    0 4px 15px rgba(0, 0, 0, 0.15),
+    0 0 0 2px rgba(0, 0, 0, 0.1) inset;
+}
+
+.barcode-text {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #555;
+  font-family: monospace;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.barcode-label {
+  margin-top: 8px;
+  font-size: 12px;
+  color: #666;
+  font-weight: 500;
+  text-align: center;
+}
+
+.barcode-info {
+  margin-top: 8px;
+  font-size: 11px;
+  color: #888;
+  text-align: center;
+  font-style: italic;
+}
+
+/* Mobile responsive */
+@media (max-width: 480px) {
+  .barcode-container {
+    margin: 12px 0;
+    padding: 12px;
+  }
+  
+  .barcode-canvas {
+    max-width: 100%;
+    height: auto;
+  }
+  
+  .barcode-canvas.square-barcode {
+    padding: 8px;
+  }
+}

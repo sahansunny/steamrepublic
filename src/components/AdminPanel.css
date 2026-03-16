@@ -1,0 +1,255 @@
+.admin-panel {
+  animation: fadeIn 0.3s ease-in;
+}
+
+.admin-form {
+  background: rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.admin-form h3 {
+  margin-bottom: 20px;
+  color: #ffffff !important;
+}
+
+.admin-form .form-group {
+  margin-bottom: 20px;
+  text-align: left;
+}
+
+.admin-form .form-group label {
+  display: block;
+  color: #ffffff !important;
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 14px;
+  letter-spacing: 0.3px;
+}
+
+.admin-form input {
+  width: 100%;
+  padding: 12px;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  background: rgba(255, 255, 255, 0.05);
+  color: #ffffff !important;
+}
+
+.admin-form input:focus {
+  outline: none;
+  border-color: rgba(255, 255, 255, 0.4);
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.1);
+}
+
+.admin-form button {
+  width: 100%;
+  padding: 15px;
+  background: #667eea;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.admin-form button:hover {
+  background: #5568d3;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.staff-btn {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.staff-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.logout-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.logout-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+  transform: translateY(-2px);
+}
+/* Responsive Design for Admin Panel */
+@media (max-width: 600px) {
+  .admin-form {
+    padding: 24px;
+    border-radius: 16px;
+  }
+  
+  .admin-form h3 {
+    font-size: 1.2em;
+    margin-bottom: 16px;
+  }
+  
+  .admin-form input {
+    padding: 10px;
+    font-size: 15px;
+  }
+  
+  .admin-form button {
+    padding: 12px;
+    font-size: 15px;
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+    text-align: center;
+  }
+  
+  .header-buttons {
+    width: 100%;
+    justify-content: center;
+  }
+  
+  .staff-btn,
+  .logout-btn {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+/* Enhanced Mobile Responsiveness */
+@media (max-width: 480px) {
+  .admin-form {
+    padding: 20px;
+    border-radius: 14px;
+  }
+  
+  .admin-form input {
+    padding: 8px;
+    font-size: 14px;
+  }
+  
+  .admin-form button {
+    padding: 10px;
+    font-size: 14px;
+  }
+  
+  .header-buttons {
+    flex-direction: column;
+    width: 100%;
+  }
+  
+  .staff-btn,
+  .logout-btn {
+    width: 100%;
+    padding: 10px;
+  }
+}
+
+/* Tablet Responsiveness */
+@media (min-width: 601px) and (max-width: 1024px) {
+  .admin-form {
+    padding: 28px;
+  }
+  
+  .admin-form input {
+    padding: 14px;
+  }
+  
+  .admin-form button {
+    padding: 16px;
+  }
+}
+/* Admin Tabs */
+.admin-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  background: rgba(255, 255, 255, 0.05);
+  padding: 8px;
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.admin-tabs .tab-btn {
+  flex: 1;
+  padding: 12px 20px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.7);
+  border: none;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.admin-tabs .tab-btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.admin-tabs .tab-btn.active {
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #ffffff;
+  box-shadow: 
+    0 8px 25px rgba(245, 158, 11, 0.3),
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset;
+}
+
+.scanner-section,
+.manual-section {
+  animation: fadeIn 0.4s ease-out;
+}
+
+/* Mobile responsive for admin tabs */
+@media (max-width: 600px) {
+  .admin-tabs {
+    margin-bottom: 20px;
+  }
+  
+  .admin-tabs .tab-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-tabs .tab-btn {
+    padding: 8px 12px;
+    font-size: 12px;
+  }
+}

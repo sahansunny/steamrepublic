@@ -1,0 +1,73 @@
+.particle-system {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+  overflow: hidden;
+}
+
+.particle-dot {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: particleGlow 4s ease-in-out infinite alternate;
+}
+
+.particle-neural {
+  animation: particleGlow 4s ease-in-out infinite alternate, neuralPulse 2s ease-in-out infinite;
+}
+
+.particle-apex {
+  animation: particleGlow 4s ease-in-out infinite alternate, apexSpin 3s linear infinite;
+}
+
+.particle-nexus {
+  animation: particleGlow 4s ease-in-out infinite alternate, nexusFloat 5s ease-in-out infinite;
+}
+
+@keyframes particleGlow {
+  0% {
+    filter: brightness(1) blur(0px) hue-rotate(0deg);
+    transform: scale(1);
+  }
+  100% {
+    filter: brightness(2) blur(2px) hue-rotate(90deg);
+    transform: scale(1.5);
+  }
+}
+
+@keyframes neuralPulse {
+  0%, 100% {
+    box-shadow: 
+      0 0 10px currentColor,
+      0 0 20px currentColor,
+      0 0 30px currentColor;
+  }
+  50% {
+    box-shadow: 
+      0 0 20px currentColor,
+      0 0 40px currentColor,
+      0 0 60px currentColor;
+  }
+}
+
+@keyframes apexSpin {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1.2);
+  }
+}
+
+@keyframes nexusFloat {
+  0%, 100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.3);
+  }
+}
