@@ -24,7 +24,6 @@ export default function Login({ onLoginSuccess, onSwitchToSignup, onAdminAccess 
     setError('')
 
     try {
-      // Check if user exists
       const usersRef = collection(db, 'users')
       const q = query(usersRef, where('mobile', '==', mobile))
       const querySnapshot = await getDocs(q)
@@ -35,48 +34,42 @@ export default function Login({ onLoginSuccess, onSwitchToSignup, onAdminAccess 
         return
       }
 
-      // Get user ID
-      const userDoc = querySnapshot.docs[0]
-      const userId = userDoc.id
-
+      const userId = querySnapshot.docs[0].id
       setLoading(false)
       onLoginSuccess(userId)
     } catch (err: any) {
-      console.error('Login error:', err)
       setError(err.message || 'Failed to login. Please try again.')
       setLoading(false)
-    }
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleLogin()
     }
   }
 
   return (
     <div className="login">
       <div className="logo">
-        <img src="/Steamreublic.png" alt="Steam Republic" className="logo-image" />
+        <img src="/Steamreublic.png" alt="Steam Republic logo" className="logo-image" width="80" height="80" />
       </div>
       <h1>Welcome Back</h1>
       <p className="tagline">Login to your MomoWallet</p>
 
-      <div className="login-form">
+      <div className="login-form" role="form" aria-label="Login form">
         <div className="form-group">
-          <label>Mobile Number</label>
+          <label htmlFor="login-mobile">Mobile Number</label>
           <input
+            id="login-mobile"
             type="tel"
             value={mobile}
             onChange={(e) => setMobile(e.target.value.replace(/\D/g, '').slice(0, 10))}
-            onKeyPress={handleKeyPress}
+            onKeyDown={(e) => e.key === 'Enter' && handleLogin()}
             placeholder="Enter your 10-digit mobile"
             maxLength={10}
             disabled={loading}
+            autoComplete="tel"
+            inputMode="numeric"
+            aria-describedby={error ? 'login-error' : undefined}
           />
         </div>
 
-        {error && <p className="error-message">{error}</p>}
+        {error && <p id="login-error" className="error-message" role="alert">{error}</p>}
 
         <button onClick={handleLogin} className="login-btn" disabled={loading}>
           {loading ? 'Logging in...' : 'Login'}
@@ -84,17 +77,22 @@ export default function Login({ onLoginSuccess, onSwitchToSignup, onAdminAccess 
 
         <p className="switch-text">
           Don't have an account?{' '}
-          <span onClick={onSwitchToSignup} className="switch-link">
+          <button type="button" onClick={onSwitchToSignup} className="switch-link">
             Sign up here
-          </span>
+          </button>
         </p>
       </div>
 
       <div className="qr-hint">
         <p>💡 Scan the QR code at our stall to access your wallet instantly!</p>
-        <div className="admin-logo-inline" onClick={onAdminAccess}>
-          <img src="/Steamreublic.png" alt="Admin Access" className="admin-logo-image" />
-        </div>
+        <button
+          type="button"
+          className="admin-logo-inline"
+          onClick={onAdminAccess}
+          aria-label="Admin access"
+        >
+          <img src="/Steamreublic.png" alt="" className="admin-logo-image" aria-hidden="true" />
+        </button>
       </div>
     </div>
   )

@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { doc, getDoc, updateDoc, runTransaction } from 'firebase/firestore'
+import { doc, runTransaction } from 'firebase/firestore'
 import { db } from '../firebase'
 import './ClaimCoins.css'
 

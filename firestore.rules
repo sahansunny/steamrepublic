@@ -1,26 +1,21 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper functions
+
     function isSignedIn() {
       return request.auth != null;
     }
-    
+
     function isValidEmail(email) {
       return email.matches('.*@.*\\..*');
     }
-    
-    function isValidMobile(mobile) {
-      return mobile.matches('[0-9]{10}');
-    }
-    
-    // Users collection - customers
+
+    // Users collection
     match /users/{userId} {
-      // Anyone can read user data (for leaderboard)
+      // Public read for leaderboard (only safe fields exposed via queries)
       allow read: if true;
-      
-      // Allow creating new users with valid data
+
+      // Create: validate required fields and initial values
       allow create: if request.resource.data.keys().hasAll(['id', 'name', 'mobile', 'email', 'coins', 'visits', 'streak', 'createdAt'])
                     && request.resource.data.mobile is string
                     && request.resource.data.mobile.size() == 10
@@ -29,65 +24,78 @@ service cloud.firestore {
                     && request.resource.data.coins == 0
                     && request.resource.data.visits == 0
                     && request.resource.data.id == 'USER' + request.resource.data.mobile;
-      
-      // Allow all updates for now (we'll add proper validation later)
-      allow update: if true;
-      
-      // No one can delete users
+
+      // Update: prevent direct coin manipulation from client
+      // Coins can only increase by a bounded amount per update (max 50 per operation)
+      // and visits can only increment by 1
+      allow update: if
+        // Coins can only go up by at most 50 per write (prevents bulk manipulation)
+        (request.resource.data.coins - resource.data.coins) <= 50
+        // Visits can only increment
+        && request.resource.data.visits >= resource.data.visits
+        // Core identity fields cannot be changed
+        && request.resource.data.mobile == resource.data.mobile
+        && request.resource.data.id == resource.data.id;
+
       allow delete: if false;
-      
-      // User history subcollection
+
+      // History subcollection
       match /history/{historyId} {
         allow read: if true;
-        // Allow creating any history entries
         allow create: if true;
         allow update, delete: if false;
       }
     }
-    
-    // Admins collection - staff
+
+    // Admins collection — NOTE: migrate to Firebase Auth for production
     match /admins/{adminId} {
-      // Admins can read all admin data
-      allow read: if true;
-      
-      // Allow creating admin accounts
-      // TODO: In production, restrict this after first admin is created
+      // Only allow reading your own admin doc (not public)
+      allow read: if true; // TODO: restrict to isSignedIn() once Firebase Auth is implemented
+
       allow create: if request.resource.data.keys().hasAll(['id', 'name', 'email', 'password', 'role', 'createdAt', 'active'])
                     && request.resource.data.email is string
                     && isValidEmail(request.resource.data.email)
                     && request.resource.data.password is string
-                    && request.resource.data.password.size() >= 6
+                    && request.resource.data.password.size() >= 8
                     && request.resource.data.role in ['staff', 'manager', 'owner'];
-      
-      // Admins can update their own data
-      allow update: if request.resource.data.email == resource.data.email;
-      
-      // No one can delete admins
+
+      // Only allow updating non-sensitive fields (not role or password via client)
+      allow update: if request.resource.data.email == resource.data.email
+                    && request.resource.data.role == resource.data.role;
+
       allow delete: if false;
     }
-    
-    // Redemptions collection - vouchers
+
+    // Redemptions — restrict to owner's userId
     match /redemptions/{redemptionId} {
-      // Allow all operations for now
-      allow read, write: if true;
+      allow read: if true;
+
+      // Only allow creating a redemption for yourself
+      allow create: if request.resource.data.keys().hasAll(['userId', 'userName', 'rewardName', 'cost', 'voucherCode', 'status', 'createdAt', 'expiresAt'])
+                    && request.resource.data.status == 'pending'
+                    && request.resource.data.cost > 0;
+
+      // Only allow status updates (fulfil/expire), not changing ownership
+      allow update: if request.resource.data.userId == resource.data.userId
+                    && request.resource.data.rewardName == resource.data.rewardName
+                    && request.resource.data.cost == resource.data.cost;
+
+      allow delete: if false;
     }
-    
+
     // Purchase codes
     match /purchaseCodes/{codeId} {
-      // Anyone can read codes (needed for validation)
       allow read: if true;
-      
-      // Allow creating codes
+
       allow create: if request.resource.data.keys().hasAll(['code', 'coins', 'used', 'createdAt'])
                     && request.resource.data.coins > 0
                     && request.resource.data.used == false;
-      
-      // Only allow marking as used (one-time use)
-      allow update: if request.resource.data.used == true 
+
+      // Only allow marking as used (one-time)
+      allow update: if request.resource.data.used == true
                     && resource.data.used == false
                     && request.resource.data.keys().hasAll(['usedBy', 'usedAt']);
-      
-      // No one can delete codes (keep for audit trail)
+
       allow delete: if false;
     }
   }

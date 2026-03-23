@@ -314,3 +314,40 @@ h3 {
     font-size: 1.1em;
   }
 }
+
+/* Footer */
+.wallet-footer {
+  margin-top: 32px;
+  padding: 16px 0 8px;
+  text-align: center;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.footer-privacy-link {
+  background: none;
+  border: none;
+  color: rgba(255, 255, 255, 0.5);
+  font-size: 0.8rem;
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+  transition: color 0.2s;
+}
+
+.footer-privacy-link:hover {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.footer-sep {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.8rem;
+}
+
+.footer-copy {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.8rem;
+}

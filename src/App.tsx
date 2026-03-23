@@ -2,6 +2,8 @@ import { useState, useEffect, Suspense, lazy } from 'react'
 import UltimateLoader from './components/UltimateLoader.tsx'
 import Notification from './components/Notification.tsx'
 import ConfirmDialog from './components/ConfirmDialog.tsx'
+import PrivacyPolicy from './components/PrivacyPolicy.tsx'
+import OfflineBanner from './components/OfflineBanner.tsx'
 import { getUserById, updateUserCoins, getAllUsers, redeemReward, subscribeToUser } from './services/userService'
 import { User } from './types.ts'
 
@@ -39,6 +41,20 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
   const [confirmLogout, setConfirmLogout] = useState<(() => void) | null>(null)
+  const [showPrivacy, setShowPrivacy] = useState(false)
+  const [isOffline, setIsOffline] = useState(!navigator.onLine)
+
+  // Offline detection
+  useEffect(() => {
+    const goOffline = () => setIsOffline(true)
+    const goOnline = () => setIsOffline(false)
+    window.addEventListener('offline', goOffline)
+    window.addEventListener('online', goOnline)
+    return () => {
+      window.removeEventListener('offline', goOffline)
+      window.removeEventListener('online', goOnline)
+    }
+  }, [])
 
   // Show notification
   const showNotification = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
@@ -201,7 +217,12 @@ function App() {
   }
 
   if (loading) {
-    return <UltimateLoader />
+    return (
+      <main id="main-content">
+        {isOffline && <OfflineBanner />}
+        <UltimateLoader />
+      </main>
+    )
   }
 
   // Admin Login Screen
@@ -220,13 +241,19 @@ function App() {
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
         <ParticleSystem />
-        <AdminLogin
-          onLoginSuccess={handleAdminLoginSuccess}
-        />
+        <main id="main-content">
+          <AdminLogin
+            onLoginSuccess={handleAdminLoginSuccess}
+          />
+        </main>
         <AdminToggle onClick={() => {
           scrollToTop()
           setCurrentScreen(currentUser ? 'wallet' : 'login')
         }} />
+        {notification && (
+          <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+        )}
+        {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
       </Suspense>
     )
   }
@@ -241,15 +268,17 @@ function App() {
     return (
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
-        <AdminPanel
-          onAddCoins={handleAddCoins}
-          onBack={handleAdminLogout}
-          onStaffDashboard={() => {
-            scrollToTop()
-            setCurrentScreen('staff')
-          }}
-          adminRole={currentAdmin.role}
-        />
+        <main id="main-content">
+          <AdminPanel
+            onAddCoins={handleAddCoins}
+            onBack={handleAdminLogout}
+            onStaffDashboard={() => {
+              scrollToTop()
+              setCurrentScreen('staff')
+            }}
+            adminRole={currentAdmin.role}
+          />
+        </main>
         {confirmLogout && (
           <ConfirmDialog
             message="Are you sure you want to logout?"
@@ -257,6 +286,10 @@ function App() {
             onCancel={() => setConfirmLogout(null)}
           />
         )}
+        {notification && (
+          <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+        )}
+        {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
       </Suspense>
     )
   }
@@ -271,24 +304,26 @@ function App() {
     return (
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
-        <StaffDashboard
-          staffId={currentAdmin.id}
-          onBack={() => {
-            scrollToTop()
-            if (currentAdmin.role === 'staff') {
-              setCurrentScreen('admin-login')
-            } else {
-              setCurrentScreen('admin')
-            }
-          }}
-          onLogout={() => {
-            requestLogout(() => {
-              setCurrentAdmin(null)
-              setCurrentScreen('admin-login')
+        <main id="main-content">
+          <StaffDashboard
+            staffId={currentAdmin.id}
+            onBack={() => {
               scrollToTop()
-            })
-          }}
-        />
+              if (currentAdmin.role === 'staff') {
+                setCurrentScreen('admin-login')
+              } else {
+                setCurrentScreen('admin')
+              }
+            }}
+            onLogout={() => {
+              requestLogout(() => {
+                setCurrentAdmin(null)
+                setCurrentScreen('admin-login')
+                scrollToTop()
+              })
+            }}
+          />
+        </main>
         {confirmLogout && (
           <ConfirmDialog
             message="Are you sure you want to logout?"
@@ -296,6 +331,10 @@ function App() {
             onCancel={() => setConfirmLogout(null)}
           />
         )}
+        {notification && (
+          <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+        )}
+        {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
       </Suspense>
     )
   }
@@ -310,10 +349,16 @@ function App() {
     return (
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
-        <CodeGenerator onBack={() => {
-          scrollToTop()
-          setCurrentScreen('admin')
-        }} />
+        <main id="main-content">
+          <CodeGenerator onBack={() => {
+            scrollToTop()
+            setCurrentScreen('admin')
+          }} />
+        </main>
+        {notification && (
+          <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+        )}
+        {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
       </Suspense>
     )
   }
@@ -324,17 +369,24 @@ function App() {
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
         <ParticleSystem />
-        <Signup 
-          onSignupSuccess={handleSignupSuccess}
-          onSwitchToLogin={() => {
-            scrollToTop()
-            setCurrentScreen('login')
-          }}
-        />
+        <main id="main-content">
+          <Signup 
+            onSignupSuccess={handleSignupSuccess}
+            onSwitchToLogin={() => {
+              scrollToTop()
+              setCurrentScreen('login')
+            }}
+            onShowPrivacy={() => setShowPrivacy(true)}
+          />
+        </main>
         <AdminToggle onClick={() => {
           scrollToTop()
           setCurrentScreen('admin-login')
         }} />
+        {notification && (
+          <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+        )}
+        {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
       </Suspense>
     )
   }
@@ -345,17 +397,23 @@ function App() {
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
         <ParticleSystem />
-        <Login 
-          onLoginSuccess={handleLoginSuccess}
-          onSwitchToSignup={() => {
-            scrollToTop()
-            setCurrentScreen('signup')
-          }}
-          onAdminAccess={() => {
-            scrollToTop()
-            setCurrentScreen('admin-login')
-          }}
-        />
+        <main id="main-content">
+          <Login 
+            onLoginSuccess={handleLoginSuccess}
+            onSwitchToSignup={() => {
+              scrollToTop()
+              setCurrentScreen('signup')
+            }}
+            onAdminAccess={() => {
+              scrollToTop()
+              setCurrentScreen('admin-login')
+            }}
+          />
+        </main>
+        {notification && (
+          <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+        )}
+        {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
       </Suspense>
     )
   }
@@ -365,14 +423,20 @@ function App() {
     return (
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
-        <ClaimCoins 
-          userId={currentUser.id}
-          onClaimSuccess={handleClaimSuccess}
-          onBack={() => {
-            scrollToTop()
-            setCurrentScreen('wallet')
-          }}
-        />
+        <main id="main-content">
+          <ClaimCoins 
+            userId={currentUser.id}
+            onClaimSuccess={handleClaimSuccess}
+            onBack={() => {
+              scrollToTop()
+              setCurrentScreen('wallet')
+            }}
+          />
+        </main>
+        {notification && (
+          <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+        )}
+        {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
       </Suspense>
     )
   }
@@ -381,18 +445,22 @@ function App() {
   if (currentUser) {
     return (
       <Suspense fallback={<UltimateLoader />}>
+        {isOffline && <OfflineBanner />}
         <NeuralBackground />
         <ParticleSystem />
-        <Wallet
-          user={currentUser}
-          allUsers={allUsers}
-          onLogout={handleLogout}
-          onClaimCoins={() => {
-            scrollToTop()
-            setCurrentScreen('claim')
-          }}
-          onRedeemReward={handleRedeemReward}
-        />
+        <main id="main-content">
+          <Wallet
+            user={currentUser}
+            allUsers={allUsers}
+            onLogout={handleLogout}
+            onClaimCoins={() => {
+              scrollToTop()
+              setCurrentScreen('claim')
+            }}
+            onRedeemReward={handleRedeemReward}
+            onShowPrivacy={() => setShowPrivacy(true)}
+          />
+        </main>
         {notification && (
           <Notification
             message={notification.message}
@@ -407,6 +475,7 @@ function App() {
             onCancel={() => setConfirmLogout(null)}
           />
         )}
+        {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
       </Suspense>
     )
   }
@@ -414,19 +483,22 @@ function App() {
   // Default: Customer Login
   return (
     <Suspense fallback={<UltimateLoader />}>
+      {isOffline && <OfflineBanner />}
       <NeuralBackground />
       <ParticleSystem />
-      <Login 
-        onLoginSuccess={handleLoginSuccess}
-        onSwitchToSignup={() => {
-          scrollToTop()
-          setCurrentScreen('signup')
-        }}
-        onAdminAccess={() => {
-          scrollToTop()
-          setCurrentScreen('admin-login')
-        }}
-      />
+      <main id="main-content">
+        <Login 
+          onLoginSuccess={handleLoginSuccess}
+          onSwitchToSignup={() => {
+            scrollToTop()
+            setCurrentScreen('signup')
+          }}
+          onAdminAccess={() => {
+            scrollToTop()
+            setCurrentScreen('admin-login')
+          }}
+        />
+      </main>
       {notification && (
         <Notification
           message={notification.message}
@@ -434,6 +506,7 @@ function App() {
           onClose={() => setNotification(null)}
         />
       )}
+      {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
     </Suspense>
   )
 }

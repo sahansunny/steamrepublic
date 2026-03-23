@@ -7,44 +7,31 @@ import './Signup.css'
 interface SignupProps {
   onSignupSuccess: (userId: string) => void
   onSwitchToLogin: () => void
+  onShowPrivacy?: () => void
 }
 
-export default function Signup({ onSignupSuccess, onSwitchToLogin }: SignupProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    mobile: '',
-    email: ''
-  })
+export default function Signup({ onSignupSuccess, onSwitchToLogin, onShowPrivacy }: SignupProps) {
+  const [formData, setFormData] = useState({ name: '', mobile: '', email: '' })
+  const [consentGiven, setConsentGiven] = useState(false)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
+  const sanitize = (str: string) => str.replace(/[<>'"]/g, '').trim()
+
   const validateForm = () => {
-    if (!formData.name.trim()) {
-      setError('Please enter your name')
-      return false
-    }
-    if (!formData.mobile.trim() || formData.mobile.length !== 10) {
-      setError('Please enter a valid 10-digit mobile number')
-      return false
-    }
-    if (!formData.email.trim() || !formData.email.includes('@')) {
-      setError('Please enter a valid email address')
-      return false
-    }
+    if (!formData.name.trim()) { setError('Please enter your name'); return false }
+    if (!formData.mobile.trim() || formData.mobile.length !== 10) { setError('Please enter a valid 10-digit mobile number'); return false }
+    if (!formData.email.trim() || !formData.email.includes('@')) { setError('Please enter a valid email address'); return false }
+    if (!consentGiven) { setError('Please accept the privacy policy to continue'); return false }
     return true
   }
 
   const handleSignup = async () => {
     if (!validateForm()) return
-
     setLoading(true)
     setError('')
 
     try {
-      console.log('Starting signup process...')
-      console.log('Form data:', formData)
-      
-      // Check if mobile number already exists
       const usersRef = collection(db, 'users')
       const q = query(usersRef, where('mobile', '==', formData.mobile))
       const querySnapshot = await getDocs(q)
@@ -55,127 +42,127 @@ export default function Signup({ onSignupSuccess, onSwitchToLogin }: SignupProps
         return
       }
 
-      // Create unique user ID from mobile number
       const userId = `USER${formData.mobile}`
-      console.log('Creating user with ID:', userId)
-
-      // Generate unique barcode for the user
       const userBarcode = generateUserBarcode(userId, formData.mobile)
-      console.log('Generated barcode:', userBarcode)
 
-      // Create user document in Firestore
       await setDoc(doc(db, 'users', userId), {
         id: userId,
-        name: formData.name.trim(),
+        name: sanitize(formData.name),
         mobile: formData.mobile.trim(),
-        email: formData.email.trim().toLowerCase(),
+        email: sanitize(formData.email).toLowerCase(),
         barcode: userBarcode,
         coins: 0,
         visits: 0,
         streak: 0,
         createdAt: new Date().toISOString(),
         lastClaimDate: '',
-        claimsToday: 0
+        claimsToday: 0,
+        whatsappConsent: true,
+        consentDate: new Date().toISOString()
       })
 
-      console.log('User created successfully!')
-
-      // Initialize empty history collection
       await setDoc(doc(db, 'users', userId, 'history', 'init'), {
         initialized: true,
         timestamp: new Date().toISOString()
       })
 
-      console.log('History initialized!')
       setLoading(false)
       onSignupSuccess(userId)
     } catch (err: any) {
-      console.error('Signup error:', err)
-      console.error('Error code:', err.code)
-      console.error('Error message:', err.message)
-      
       let errorMessage = 'Failed to create account. '
-      
-      if (err.code === 'permission-denied') {
-        errorMessage += 'Database permission denied. Please check Firestore rules.'
-      } else if (err.code === 'unavailable') {
-        errorMessage += 'Cannot connect to database. Check your internet connection.'
-      } else if (err.message) {
-        errorMessage += err.message
-      } else {
-        errorMessage += 'Please try again.'
-      }
-      
+      if (err.code === 'permission-denied') errorMessage += 'Database permission denied.'
+      else if (err.code === 'unavailable') errorMessage += 'Cannot connect. Check your internet.'
+      else errorMessage += err.message || 'Please try again.'
       setError(errorMessage)
       setLoading(false)
-    }
-  }
-
-  const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
-      handleSignup()
     }
   }
 
   return (
     <div className="signup">
       <div className="logo">
-        <img src="/Steamreublic.png" alt="Steam Republic" className="logo-image" />
+        <img src="/Steamreublic.png" alt="Steam Republic logo" className="logo-image" width="80" height="80" />
       </div>
       <h1>Join Steam Republic</h1>
       <p className="tagline">Create your MomoWallet account</p>
 
-      <div className="signup-form">
+      <div className="signup-form" role="form" aria-label="Sign up form">
         <div className="form-group">
-          <label>Full Name</label>
+          <label htmlFor="signup-name">Full Name</label>
           <input
+            id="signup-name"
             type="text"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
             placeholder="Enter your name"
             disabled={loading}
+            autoComplete="name"
           />
         </div>
 
         <div className="form-group">
-          <label>Mobile Number</label>
+          <label htmlFor="signup-mobile">Mobile Number</label>
           <input
+            id="signup-mobile"
             type="tel"
             value={formData.mobile}
             onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) })}
             placeholder="10-digit mobile number"
             maxLength={10}
             disabled={loading}
+            autoComplete="tel"
+            inputMode="numeric"
           />
         </div>
 
         <div className="form-group">
-          <label>Email Address</label>
+          <label htmlFor="signup-email">Email Address</label>
           <input
+            id="signup-email"
             type="email"
             value={formData.email}
             onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            onKeyPress={handleKeyPress}
+            onKeyDown={(e) => e.key === 'Enter' && handleSignup()}
             placeholder="your@email.com"
             disabled={loading}
+            autoComplete="email"
           />
         </div>
 
-        {error && <p className="error-message">{error}</p>}
+        <div className="form-group consent-group">
+          <label className="consent-label">
+            <input
+              type="checkbox"
+              checked={consentGiven}
+              onChange={(e) => setConsentGiven(e.target.checked)}
+              disabled={loading}
+              aria-required="true"
+            />
+            <span>
+              I agree to the{' '}
+              <button type="button" className="privacy-link" onClick={onShowPrivacy}>
+                Privacy Policy
+              </button>
+              {' '}and consent to receiving WhatsApp notifications about my MomoCoins.
+            </span>
+          </label>
+        </div>
 
-        <button onClick={handleSignup} className="signup-btn" disabled={loading}>
+        {error && <p className="error-message" role="alert">{error}</p>}
+
+        <button onClick={handleSignup} className="signup-btn" disabled={loading || !consentGiven}>
           {loading ? 'Creating Account...' : 'Create Account'}
         </button>
 
         <p className="switch-text">
           Already have an account?{' '}
-          <span onClick={onSwitchToLogin} className="switch-link">
+          <button type="button" onClick={onSwitchToLogin} className="switch-link">
             Login here
-          </span>
+          </button>
         </p>
       </div>
 
-      <div className="benefits">
+      <div className="benefits" aria-label="Benefits of joining">
         <h3>Why join?</h3>
         <ul>
           <li>🪙 Earn MomoCoins with every purchase</li>

@@ -1,0 +1,26 @@
+{
+  "name": "Steam Republic MomoWallet",
+  "short_name": "MomoWallet",
+  "description": "Earn and redeem MomoCoins at Steam Republic. Your loyalty rewards wallet.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/Steamreublic.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/Steamreublic.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["food", "lifestyle", "shopping"],
+  "lang": "en"
+}

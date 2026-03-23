@@ -17,16 +17,17 @@ interface WalletProps {
   onLogout: () => void
   onClaimCoins: () => void
   onRedeemReward: (rewardName: string, cost: number) => void
+  onShowPrivacy?: () => void
 }
 
-export default function Wallet({ user, allUsers, onLogout, onClaimCoins, onRedeemReward }: WalletProps) {
+export default function Wallet({ user, allUsers, onLogout, onClaimCoins, onRedeemReward, onShowPrivacy }: WalletProps) {
   const [activeTab, setActiveTab] = useState<'rewards' | 'vouchers' | 'history' | 'leaderboard' | 'secret'>('rewards')
 
   return (
     <div className="wallet">
       <div className="header">
         <h2>MomoWallet</h2>
-        <button onClick={onLogout} className="logout-btn">Logout</button>
+        <button onClick={onLogout} className="logout-btn" aria-label="Logout from MomoWallet">Logout</button>
       </div>
 
       <BalanceCard user={user} />
@@ -58,6 +59,14 @@ export default function Wallet({ user, allUsers, onLogout, onClaimCoins, onRedee
         {activeTab === 'leaderboard' && <LeaderboardTab users={allUsers} />}
         {activeTab === 'secret' && <SecretMenuTab coins={user.coins} />}
       </div>
+
+      <footer className="wallet-footer">
+        <button type="button" className="footer-privacy-link" onClick={onShowPrivacy}>
+          Privacy Policy
+        </button>
+        <span className="footer-sep">·</span>
+        <span className="footer-copy">© {new Date().getFullYear()} Steam Republic</span>
+      </footer>
     </div>
   )
 }

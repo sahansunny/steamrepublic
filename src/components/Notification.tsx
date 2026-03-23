@@ -14,9 +14,8 @@ export default function Notification({ message, type, duration = 4000, onClose }
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsVisible(false)
-      setTimeout(onClose, 300) // Wait for fade out animation
+      setTimeout(onClose, 300)
     }, duration)
-
     return () => clearTimeout(timer)
   }, [duration, onClose])
 
@@ -30,14 +29,20 @@ export default function Notification({ message, type, duration = 4000, onClose }
   }
 
   return (
-    <div className={`notification ${type} ${isVisible ? 'visible' : 'hidden'}`}>
+    <div
+      className={`notification ${type} ${isVisible ? 'visible' : 'hidden'}`}
+      role="alert"
+      aria-live="assertive"
+      aria-atomic="true"
+    >
       <div className="notification-content">
-        <span className="notification-icon">{getIcon()}</span>
+        <span className="notification-icon" aria-hidden="true">{getIcon()}</span>
         <span className="notification-message">{message}</span>
-        <button className="notification-close" onClick={() => {
-          setIsVisible(false)
-          setTimeout(onClose, 300)
-        }}>
+        <button
+          className="notification-close"
+          onClick={() => { setIsVisible(false); setTimeout(onClose, 300) }}
+          aria-label="Dismiss notification"
+        >
           ✕
         </button>
       </div>
