@@ -96,9 +96,8 @@ body::before {
 
 /* ─── Typography ─── */
 h1, h2, h3, h4, h5, h6 { color: var(--white); }
-p, span, div, label { color: var(--white); }
 label { font-weight: 600; }
-input::placeholder, textarea::placeholder { color: var(--text-3) !important; }
+input::placeholder, textarea::placeholder { color: rgba(255,255,255,0.38) !important; }
 
 /* ─── Skip link ─── */
 .skip-link {
