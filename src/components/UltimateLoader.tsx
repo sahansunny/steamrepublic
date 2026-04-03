@@ -14,7 +14,7 @@ export default function UltimateLoader({ message = "Loading Ultimate Experience.
           <div className="ring ring-3"></div>
         </div>
         <div className="loader-logo">
-          <img src="/src/images/Steamreublic.png" alt="Steam Republic" className="loader-logo-image" />
+          <img src="/Steamreublic.png" alt="Steam Republic" className="loader-logo-image" />
         </div>
       </div>
       <h2 className="loader-text">{message}</h2>

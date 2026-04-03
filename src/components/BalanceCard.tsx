@@ -40,7 +40,7 @@ export default function BalanceCard({ user }: BalanceCardProps) {
     <div className={`balance-card ${isUpdating ? 'updating' : ''}`}>
       <div className="coin-display">
         <div className="rotating-logo">
-          <img src="/src/images/Steamreublic.png" alt="Steam Republic" className="coin-logo" />
+          <img src="/Steamreublic.png" alt="Steam Republic" className="coin-logo" />
         </div>
         <span className={`balance ${isUpdating ? 'pulse' : ''}`}>{user.coins}</span>
         <span className="coin-label">MomoCoins</span>

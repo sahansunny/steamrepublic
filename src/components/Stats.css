@@ -36,11 +36,8 @@
 }
 
 .stat:hover {
-  transform: translateY(-10px) rotateX(8deg) translateZ(20px);
-  box-shadow: 
-    0 40px 80px rgba(0, 0, 0, 0.6),
-    0 0 50px rgba(255, 255, 255, 0.2),
-    0 30px 60px rgba(0, 0, 0, 0.3);
+  transform: translateY(-6px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(255, 255, 255, 0.08);
 }
 
 .stat-value {

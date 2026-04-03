@@ -30,12 +30,15 @@
   --accent-nexus: #00ffff;
   --accent-hyper: #ffd700;
   --accent-blue: #667eea;
+  --accent-purple: #8b00ff;
+  --accent-pink: #ff00ff;
   
   /* Glass Effects */
   --glass-bg: rgba(255, 255, 255, 0.08);
   --glass-border: rgba(255, 255, 255, 0.15);
   --glass-border-neural: rgba(255, 255, 255, 0.2);
   --glass-border-ultra: rgba(255, 255, 255, 0.25);
+  --glass-ultra: rgba(255, 255, 255, 0.08);
   
   /* Shadows */
   --shadow-premium: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) inset;
@@ -108,13 +111,14 @@ body::before {
   right: 0;
   bottom: 0;
   background: 
-    radial-gradient(circle at 15% 15%, rgba(139, 0, 255, 0.3) 0%, transparent 40%),
-    radial-gradient(circle at 85% 85%, rgba(255, 0, 255, 0.3) 0%, transparent 40%),
-    radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.2) 0%, transparent 50%),
-    radial-gradient(circle at 30% 70%, rgba(255, 215, 0, 0.15) 0%, transparent 40%);
+    radial-gradient(circle at 15% 15%, rgba(139, 0, 255, 0.25) 0%, transparent 40%),
+    radial-gradient(circle at 85% 85%, rgba(255, 0, 255, 0.2) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(0, 255, 255, 0.12) 0%, transparent 50%),
+    radial-gradient(circle at 30% 70%, rgba(255, 215, 0, 0.1) 0%, transparent 40%);
   pointer-events: none;
   z-index: 0;
-  animation: neuralPulse 30s ease-in-out infinite;
+  will-change: opacity;
+  animation: neuralPulse 40s ease-in-out infinite;
 }
 
 body::after {
@@ -125,11 +129,10 @@ body::after {
   right: 0;
   bottom: 0;
   background: 
-    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.03) 2px, rgba(0, 255, 255, 0.03) 4px),
-    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 0, 255, 0.03) 2px, rgba(255, 0, 255, 0.03) 4px);
+    repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0, 255, 255, 0.015) 2px, rgba(0, 255, 255, 0.015) 4px),
+    repeating-linear-gradient(90deg, transparent, transparent 2px, rgba(255, 0, 255, 0.015) 2px, rgba(255, 0, 255, 0.015) 4px);
   pointer-events: none;
   z-index: 1;
-  animation: neuralGrid 20s linear infinite;
 }
 
 #root {
@@ -510,4 +513,9 @@ img {
 @keyframes neuralGrid {
   0% { transform: translate(0, 0); }
   100% { transform: translate(4px, 4px); }
+}
+
+@keyframes logoFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
 }
