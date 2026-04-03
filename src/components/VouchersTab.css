@@ -1,175 +1,36 @@
 /* ── Vouchers Tab ── */
-.loading {
-  text-align: center;
-  padding: 48px 20px;
-  color: var(--text-2);
-  font-size: .9rem;
-}
+.loading { text-align: center; padding: 48px 20px; color: var(--text-2); font-size: .9rem; }
 
-.no-vouchers {
-  text-align: center;
-  padding: 52px 20px;
-  background: rgba(255,255,255,0.03);
-  border-radius: var(--radius-md);
-  border: 1px dashed rgba(255,255,255,0.08);
-}
-
-.empty-icon { font-size: 3rem; margin-bottom: 14px; }
-
-.no-vouchers p {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0 0 6px;
-  color: var(--text-1);
-}
-
+.no-vouchers { text-align: center; padding: 52px 20px; background: rgba(255,255,255,0.03); border-radius: var(--radius-md); border: 1px dashed rgba(255,255,255,0.08); }
+.empty-icon { font-size: 3rem; margin-bottom: 14px; display: block; }
+.no-vouchers p { font-size: 1rem; font-weight: 600; margin: 0 0 6px; color: var(--text-1); }
 .no-vouchers small { color: var(--text-2); font-size: .84rem; }
 
-.vouchers-list {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
+.vouchers-list { display: flex; flex-direction: column; gap: 12px; }
 
-.voucher-card {
-  background: rgba(255,255,255,0.05);
-  border-radius: var(--radius-md);
-  padding: 18px;
-  border: 1px solid var(--border);
-  transition: background .22s ease, transform .22s ease;
-}
-
-.voucher-card:hover {
-  background: var(--glass-hover);
-  transform: translateY(-2px);
-}
+.voucher-card { background: rgba(255,255,255,0.05); border-radius: var(--radius-md); padding: 18px; border: 1px solid var(--border); transition: background .22s ease, transform .22s ease; }
+.voucher-card:hover { background: var(--glass-hover); transform: translateY(-2px); }
 
 .voucher-header { margin-bottom: 14px; }
+.reward-info { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.reward-info h4 { margin: 0; color: var(--white); font-size: .95rem; font-weight: 700; }
 
-.reward-info {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 10px;
-}
+.status-badge { padding: 4px 11px; border-radius: 50px; font-size: .7rem; font-weight: 800; color: #000; letter-spacing: .5px; text-transform: uppercase; flex-shrink: 0; }
 
-.reward-info h4 {
-  margin: 0;
-  color: var(--white);
-  font-size: .95rem;
-  font-weight: 700;
-}
-
-.status-badge {
-  padding: 4px 11px;
-  border-radius: 50px;
-  font-size: .7rem;
-  font-weight: 800;
-  color: #000;
-  letter-spacing: .5px;
-  text-transform: uppercase;
-  flex-shrink: 0;
-}
-
-/* ── Code section ── */
-.voucher-code-section {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 14px;
-  padding: 12px 14px;
-  background: rgba(0,0,0,0.3);
-  border-radius: var(--radius-sm);
-  border: 1px solid rgba(255,255,255,0.08);
-}
-
-.voucher-code {
-  font-family: 'Courier New', monospace;
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--cyan);
-  flex: 1;
-  letter-spacing: 2px;
-}
-
-.copy-btn {
-  background: rgba(255,255,255,0.08);
-  color: var(--white);
-  border: 1px solid var(--border);
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  font-size: .8rem;
-  font-weight: 600;
-  transition: background .22s ease, transform .22s ease;
-  white-space: nowrap;
-}
-
+.voucher-code-section { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; padding: 12px 14px; background: rgba(0,0,0,0.3); border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.08); }
+.voucher-code { font-family: 'Courier New',monospace; font-size: 1rem; font-weight: 700; color: var(--cyan); flex: 1; letter-spacing: 2px; }
+.copy-btn { background: rgba(255,255,255,0.08); color: var(--white); border: 1px solid var(--border); padding: 6px 12px; border-radius: var(--radius-sm); cursor: pointer; font-size: .8rem; font-weight: 600; transition: background .22s ease, transform .22s ease; white-space: nowrap; }
 .copy-btn:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
 
-/* ── Details ── */
-.voucher-details {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  margin-bottom: 12px;
-}
-
-.detail-item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 3px 0;
-}
-
-.detail-item .label {
-  font-weight: 600;
-  color: var(--text-2);
-  font-size: .82rem;
-}
-
-.detail-item span:last-child {
-  color: var(--text-1);
-  font-weight: 500;
-  font-size: .82rem;
-}
-
+.voucher-details { display: flex; flex-direction: column; gap: 6px; margin-bottom: 12px; }
+.detail-item { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; }
+.detail-item .label { font-weight: 600; color: var(--text-2); font-size: .82rem; }
+.detail-item span:last-child { color: var(--text-1); font-weight: 500; font-size: .82rem; }
 .expiring-soon { color: var(--red) !important; font-weight: 700 !important; }
 
-/* ── Info boxes ── */
-.usage-instructions {
-  background: rgba(103,232,249,0.06);
-  border: 1px solid rgba(103,232,249,0.18);
-  border-radius: var(--radius-sm);
-  padding: 11px 14px;
-  margin-top: 10px;
-}
+.usage-instructions { background: rgba(103,232,249,0.06); border: 1px solid rgba(103,232,249,0.18); border-radius: var(--radius-sm); padding: 11px 14px; margin-top: 10px; }
+.usage-instructions p { margin: 0; color: var(--text-2); font-size: .82rem; }
 
-.usage-instructions p {
-  margin: 0;
-  color: var(--text-2);
-  font-size: .82rem;
-}
-
-.fulfilled-info {
-  background: rgba(72,187,120,0.07);
-  border: 1px solid rgba(72,187,120,0.2);
-  border-radius: var(--radius-sm);
-  padding: 11px 14px;
-  margin-top: 10px;
-}
-
-.fulfilled-info p {
-  margin: 0;
-  color: var(--text-1);
-  font-size: .82rem;
-  font-weight: 600;
-}
-
-.fulfilled-by {
-  margin: 6px 0 0 !important;
-  color: var(--text-2) !important;
-  font-size: .78rem !important;
-  font-weight: 400 !important;
-  font-style: italic;
-}
+.fulfilled-info { background: rgba(72,187,120,0.07); border: 1px solid rgba(72,187,120,0.2); border-radius: var(--radius-sm); padding: 11px 14px; margin-top: 10px; }
+.fulfilled-info p { margin: 0; color: var(--text-1); font-size: .82rem; font-weight: 600; }
+.fulfilled-by { margin: 6px 0 0 !important; color: var(--text-2) !important; font-size: .78rem !important; font-weight: 400 !important; font-style: italic; }

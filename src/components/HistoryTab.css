@@ -1,95 +1,19 @@
 /* ── History Tab ── */
-.history-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+.history-list { display: flex; flex-direction: column; gap: 8px; }
 
-.history-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 13px 15px;
-  background: rgba(255,255,255,0.04);
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border);
-  border-left: 3px solid transparent;
-  transition: background .22s ease, transform .22s ease;
-}
-
-.history-item:hover {
-  background: rgba(255,255,255,0.07);
-  transform: translateX(3px);
-}
-
+.history-item { display: flex; align-items: center; gap: 12px; padding: 13px 15px; background: rgba(255,255,255,0.04); border-radius: var(--radius-md); border: 1px solid var(--border); border-left: 3px solid transparent; transition: background .22s ease, transform .22s ease; }
+.history-item:hover { background: rgba(255,255,255,0.07); transform: translateX(3px); }
 .history-item.positive { border-left-color: rgba(72,187,120,0.55); }
 .history-item.negative { border-left-color: rgba(252,129,129,0.55); }
 
-.history-icon {
-  font-size: 1.25rem;
-  flex-shrink: 0;
-  width: 32px;
-  text-align: center;
-}
-
-.history-body {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-  min-width: 0;
-}
-
-.history-reason {
-  color: var(--text-1);
-  font-size: .86rem;
-  font-weight: 600;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  flex-wrap: wrap;
-}
-
-.admin-badge {
-  font-size: .7rem;
-  background: rgba(255,215,0,0.12);
-  border: 1px solid rgba(255,215,0,0.28);
-  color: var(--gold);
-  padding: 2px 7px;
-  border-radius: 50px;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-.history-date {
-  color: var(--text-3);
-  font-size: .72rem;
-  font-weight: 500;
-}
-
-.history-amount {
-  font-weight: 800;
-  font-size: .95rem;
-  white-space: nowrap;
-  flex-shrink: 0;
-}
-
+.history-icon { font-size: 1.25rem; flex-shrink: 0; width: 32px; text-align: center; }
+.history-body { flex: 1; display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.history-reason { color: var(--text-1); font-size: .86rem; font-weight: 600; display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+.admin-badge { font-size: .7rem; background: rgba(255,215,0,0.12); border: 1px solid rgba(255,215,0,0.28); color: var(--gold); padding: 2px 7px; border-radius: 50px; font-weight: 700; white-space: nowrap; }
+.history-date { color: var(--text-3); font-size: .72rem; font-weight: 500; }
+.history-amount { font-weight: 800; font-size: .95rem; white-space: nowrap; flex-shrink: 0; }
 .history-amount.gain { color: #68d391; }
 .history-amount.spend { color: var(--red); }
+.coin-unit { font-size: .68rem; font-weight: 600; opacity: .65; }
 
-.coin-unit {
-  font-size: .68rem;
-  font-weight: 600;
-  opacity: .65;
-}
-
-.empty-message {
-  color: var(--text-2);
-  text-align: center;
-  padding: 48px 20px;
-  font-size: .9rem;
-  font-weight: 500;
-  background: rgba(255,255,255,0.03);
-  border-radius: var(--radius-md);
-  border: 1px dashed rgba(255,255,255,0.08);
-}
+.empty-message { color: var(--text-2); text-align: center; padding: 48px 20px; font-size: .9rem; font-weight: 500; background: rgba(255,255,255,0.03); border-radius: var(--radius-md); border: 1px dashed rgba(255,255,255,0.08); }

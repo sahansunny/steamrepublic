@@ -1,65 +1,15 @@
 /* ── Stats ── */
-.stats {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 18px;
-}
+.stats { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
 
-.stat {
-  background: var(--glass);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  padding: clamp(20px,4vw,32px) clamp(16px,3vw,24px);
-  border-radius: var(--radius-lg);
-  text-align: center;
-  border: 1px solid var(--border);
-  box-shadow: var(--shadow-card);
-  transition: transform .25s ease, box-shadow .25s ease;
-  animation: slideIn .65s ease-out .25s both;
-  position: relative;
-  overflow: hidden;
-  will-change: transform;
-}
+.stat { background: var(--glass); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); padding: clamp(20px,4vw,32px) clamp(16px,3vw,24px); border-radius: var(--radius-lg); text-align: center; border: 1px solid var(--border); box-shadow: var(--shadow-card); transition: transform .25s ease, box-shadow .25s ease; animation: slideIn .6s ease-out .2s both; position: relative; overflow: hidden; will-change: transform; }
+.stat::before { content: ''; position: absolute; top: 0; left: 15%; right: 15%; height: 1px; background: linear-gradient(90deg,transparent,rgba(255,255,255,0.1),transparent); }
+.stat:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
 
-.stat::before {
-  content: '';
-  position: absolute;
-  top: 0; left: 15%; right: 15%;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-}
+.stat-value { display: block; font-family: 'Orbitron','Inter',sans-serif; font-size: clamp(2rem,8vw,3rem); font-weight: 900; color: var(--white); margin-bottom: 8px; text-shadow: 0 0 24px rgba(255,255,255,0.25); line-height: 1; }
+.stat-label { color: var(--text-3); font-size: .72rem; font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; }
 
-.stat:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lift);
-}
-
-.stat-value {
-  display: block;
-  font-family: 'Orbitron', 'Inter', sans-serif;
-  font-size: clamp(2rem, 8vw, 3rem);
-  font-weight: 900;
-  color: var(--white);
-  margin-bottom: 8px;
-  text-shadow: 0 0 24px rgba(255,255,255,0.25);
-  line-height: 1;
-}
-
-.stat-label {
-  color: var(--text-3);
-  font-size: .72rem;
-  font-weight: 700;
-  letter-spacing: 1.8px;
-  text-transform: uppercase;
-}
-
-/* Update flash */
 .stats.updating .stat { border-color: rgba(72,187,120,0.3); }
-
-.stat-value.pulse {
-  animation: statPulse .65s ease-out;
-}
+.stat-value.pulse { animation: statPulse .65s ease-out; }
 
 @keyframes statPulse {
   0%   { transform: scale(1); color: var(--white); }

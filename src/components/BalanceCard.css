@@ -1,6 +1,4 @@
-/* ══════════════════════════════════════
-   BALANCE CARD  —  Ultra Premium
-══════════════════════════════════════ */
+/* ── Balance Card ── */
 .balance-card {
   background: var(--glass);
   backdrop-filter: blur(32px);
@@ -13,21 +11,19 @@
   box-shadow: var(--shadow-card);
   position: relative;
   overflow: hidden;
-  transition: transform .35s ease, box-shadow .35s ease;
+  transition: transform .3s ease, box-shadow .3s ease;
   animation: fadeIn .7s ease-out;
   will-change: transform;
 }
 
-/* Gold shimmer top */
 .balance-card::before {
   content: '';
   position: absolute;
   top: 0; left: 8%; right: 8%;
   height: 1px;
-  background: linear-gradient(90deg, transparent, var(--gold-dim), transparent);
+  background: linear-gradient(90deg,transparent,var(--gold-dim),transparent);
 }
 
-/* Subtle inner glow */
 .balance-card::after {
   content: '';
   position: absolute;
@@ -37,106 +33,26 @@
   border-radius: inherit;
 }
 
-.balance-card:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lift), var(--shadow-gold);
-}
+.balance-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift), var(--shadow-gold); }
 
-/* ── Coin display ── */
-.coin-display {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  position: relative;
-  z-index: 1;
-}
+.coin-display { display: flex; flex-direction: column; align-items: center; gap: 10px; position: relative; z-index: 1; }
 
-.rotating-logo {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  animation: logoFloat 5.5s ease-in-out infinite;
-  will-change: transform;
-  filter: drop-shadow(0 0 20px var(--gold-glow));
-}
+.rotating-logo { display: flex; justify-content: center; align-items: center; animation: logoFloat 5.5s ease-in-out infinite; will-change: transform; filter: drop-shadow(0 0 20px var(--gold-glow)); }
 
-.coin-logo {
-  width: 84px;
-  height: 84px;
-  object-fit: cover;
-  border-radius: 50%;
-  border: 1.5px solid var(--gold-dim);
-  box-shadow: 0 0 22px var(--gold-glow), 0 4px 16px rgba(0,0,0,0.5);
-  background: rgba(0,0,0,0.25);
-  transition: box-shadow .3s ease, border-color .3s ease;
-}
+.coin-logo { width: 84px; height: 84px; object-fit: cover; border-radius: 50%; border: 1.5px solid var(--gold-dim); box-shadow: 0 0 22px var(--gold-glow), 0 4px 16px rgba(0,0,0,0.5); background: rgba(0,0,0,0.25); transition: box-shadow .25s ease, border-color .25s ease; }
+.rotating-logo:hover .coin-logo { border-color: var(--gold); box-shadow: 0 0 40px rgba(255,215,0,0.55), 0 4px 16px rgba(0,0,0,0.5); }
 
-.rotating-logo:hover .coin-logo {
-  border-color: var(--gold);
-  box-shadow: 0 0 40px rgba(255,215,0,0.55), 0 4px 16px rgba(0,0,0,0.5);
-}
+.balance { font-family: 'Orbitron','Inter',sans-serif; font-size: clamp(3rem,13vw,5.5rem); font-weight: 900; color: var(--white); line-height: 1; text-shadow: 0 0 36px rgba(255,255,255,0.3); animation: glow 6s ease-in-out infinite; will-change: text-shadow; }
 
-.balance {
-  font-family: 'Orbitron', 'Inter', sans-serif;
-  font-size: clamp(3rem, 13vw, 5.5rem);
-  font-weight: 900;
-  color: var(--white);
-  line-height: 1;
-  text-shadow: 0 0 36px rgba(255,255,255,0.3);
-  animation: glow 6s ease-in-out infinite;
-  will-change: text-shadow;
-}
+.coin-label { color: var(--text-3); font-size: .78rem; font-weight: 700; text-transform: uppercase; letter-spacing: 2.5px; margin-top: 2px; }
 
-.coin-label {
-  color: var(--text-3);
-  font-size: .78rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 2.5px;
-  margin-top: 2px;
-}
+.citizen-badge { margin-top: 18px; padding: 9px 22px; color: #000; font-weight: 800; font-size: 12px; border-radius: 50px; display: inline-block; text-transform: uppercase; letter-spacing: 1px; box-shadow: 0 4px 16px rgba(0,0,0,0.3); position: relative; overflow: hidden; transition: transform .22s ease, box-shadow .22s ease; }
+.citizen-badge::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(255,255,255,0.22) 0%,transparent 55%); border-radius: inherit; pointer-events: none; }
+.citizen-badge:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
 
-/* ── Citizen badge ── */
-.citizen-badge {
-  margin-top: 18px;
-  padding: 9px 22px;
-  color: #000;
-  font-weight: 800;
-  font-size: 12px;
-  border-radius: 50px;
-  display: inline-block;
-  text-transform: uppercase;
-  letter-spacing: 1px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-  position: relative;
-  overflow: hidden;
-  transition: transform .22s ease, box-shadow .22s ease;
-}
-
-.citizen-badge::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(135deg, rgba(255,255,255,0.22) 0%, transparent 55%);
-  border-radius: inherit;
-  pointer-events: none;
-}
-
-.citizen-badge:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0,0,0,0.35);
-}
-
-/* ── Update flash ── */
-.balance-card.updating {
-  border-color: rgba(255,215,0,0.4);
-  box-shadow: var(--shadow-card), 0 0 24px rgba(255,215,0,0.2);
-}
-
-.balance.pulse {
-  animation: balancePulse .65s ease-out;
-}
+/* Update flash */
+.balance-card.updating { border-color: rgba(255,215,0,0.4); box-shadow: var(--shadow-card), 0 0 24px rgba(255,215,0,0.2); }
+.balance.pulse { animation: balancePulse .65s ease-out; }
 
 @keyframes balancePulse {
   0%   { transform: scale(1); color: var(--white); }
@@ -144,11 +60,5 @@
   100% { transform: scale(1); color: var(--white); }
 }
 
-@media (max-width: 600px) {
-  .balance-card { border-radius: var(--radius-lg); }
-  .coin-logo { width: 68px; height: 68px; }
-}
-
-@media (max-width: 380px) {
-  .coin-logo { width: 56px; height: 56px; }
-}
+@media (max-width: 600px) { .balance-card { border-radius: var(--radius-lg); } .coin-logo { width: 68px; height: 68px; } }
+@media (max-width: 380px) { .coin-logo { width: 56px; height: 56px; } }

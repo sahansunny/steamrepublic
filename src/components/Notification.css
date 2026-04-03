@@ -1,74 +1,15 @@
 /* ── Notification Toast ── */
-.notification {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 9999;
-  min-width: 280px;
-  max-width: min(480px, calc(100vw - 32px));
-  transition: opacity .28s ease, transform .28s ease;
-}
+.notification { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); z-index: 9999; min-width: 280px; max-width: min(480px,calc(100vw - 32px)); transition: opacity .25s ease, transform .25s ease; }
+.notification.visible { opacity: 1; transform: translateX(-50%) translateY(0); }
+.notification.hidden { opacity: 0; transform: translateX(-50%) translateY(-10px); pointer-events: none; }
 
-.notification.visible {
-  opacity: 1;
-  transform: translateX(-50%) translateY(0);
-}
+.notification-content { display: flex; align-items: center; gap: 10px; padding: 13px 16px; border-radius: var(--radius-md); backdrop-filter: blur(24px); -webkit-backdrop-filter: blur(24px); border: 1px solid var(--border); box-shadow: 0 8px 32px rgba(0,0,0,0.5); }
 
-.notification.hidden {
-  opacity: 0;
-  transform: translateX(-50%) translateY(-12px);
-  pointer-events: none;
-}
-
-.notification-content {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 13px 16px;
-  border-radius: var(--radius-md);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--border);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.5);
-}
-
-.notification.success .notification-content {
-  background: rgba(72,187,120,0.14);
-  border-color: rgba(72,187,120,0.3);
-}
-
-.notification.error .notification-content {
-  background: rgba(252,129,129,0.12);
-  border-color: rgba(252,129,129,0.28);
-}
-
-.notification.info .notification-content {
-  background: rgba(103,232,249,0.1);
-  border-color: rgba(103,232,249,0.22);
-}
+.notification.success .notification-content { background: rgba(72,187,120,0.14); border-color: rgba(72,187,120,0.3); }
+.notification.error   .notification-content { background: rgba(252,129,129,0.12); border-color: rgba(252,129,129,0.28); }
+.notification.info    .notification-content { background: rgba(103,232,249,0.1); border-color: rgba(103,232,249,0.22); }
 
 .notification-icon { font-size: 1.1rem; flex-shrink: 0; }
-
-.notification-message {
-  flex: 1;
-  color: var(--white);
-  font-size: .88rem;
-  font-weight: 600;
-  line-height: 1.4;
-}
-
-.notification-close {
-  background: none;
-  border: none;
-  color: var(--text-3);
-  font-size: 14px;
-  cursor: pointer;
-  padding: 2px 4px;
-  border-radius: 4px;
-  transition: color .2s;
-  flex-shrink: 0;
-  line-height: 1;
-}
-
+.notification-message { flex: 1; color: var(--white); font-size: .88rem; font-weight: 600; line-height: 1.4; }
+.notification-close { background: none; border: none; color: var(--text-3); font-size: 14px; cursor: pointer; padding: 2px 4px; border-radius: 4px; transition: color .2s; flex-shrink: 0; line-height: 1; }
 .notification-close:hover { color: var(--white); }

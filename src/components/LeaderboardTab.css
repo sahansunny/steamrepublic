@@ -1,66 +1,18 @@
 /* ── Leaderboard Tab ── */
-.leaderboard-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
+.leaderboard-list { display: flex; flex-direction: column; gap: 8px; }
 
-.leaderboard-item {
-  padding: 14px 16px;
-  background: rgba(255,255,255,0.05);
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  border: 1px solid var(--border);
-  transition: background .22s ease, transform .22s ease;
-}
+.leaderboard-item { padding: 14px 16px; background: rgba(255,255,255,0.05); border-radius: var(--radius-md); display: flex; align-items: center; gap: 14px; border: 1px solid var(--border); transition: background .22s ease, transform .22s ease; }
+.leaderboard-item:hover { background: var(--glass-hover); transform: translateX(3px); }
 
-.leaderboard-item:hover {
-  background: var(--glass-hover);
-  transform: translateX(3px);
-}
+.leaderboard-item:nth-child(1) { background: rgba(255,215,0,0.08); border-color: rgba(255,215,0,0.25); }
+.leaderboard-item:nth-child(2) { background: rgba(192,192,192,0.07); border-color: rgba(192,192,192,0.2); }
+.leaderboard-item:nth-child(3) { background: rgba(205,127,50,0.07); border-color: rgba(205,127,50,0.2); }
 
-/* Podium tiers */
-.leaderboard-item:nth-child(1) {
-  background: rgba(255,215,0,0.08);
-  border-color: rgba(255,215,0,0.25);
-}
-
-.leaderboard-item:nth-child(2) {
-  background: rgba(192,192,192,0.07);
-  border-color: rgba(192,192,192,0.2);
-}
-
-.leaderboard-item:nth-child(3) {
-  background: rgba(205,127,50,0.07);
-  border-color: rgba(205,127,50,0.2);
-}
-
-.rank {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 900;
-  min-width: 36px;
-  text-align: center;
-  color: var(--gold);
-}
-
+.rank { font-family: 'Orbitron',sans-serif; font-size: 1.1rem; font-weight: 900; min-width: 36px; text-align: center; color: var(--gold); }
 .leaderboard-item:nth-child(2) .rank { color: #c0c0c0; }
 .leaderboard-item:nth-child(3) .rank { color: #cd7f32; }
 .leaderboard-item:nth-child(n+4) .rank { color: var(--text-3); font-size: .9rem; }
 
 .player-info { flex: 1; }
-
-.player-name {
-  font-weight: 700;
-  color: var(--white);
-  font-size: .92rem;
-  margin-bottom: 3px;
-}
-
-.player-coins {
-  color: var(--text-2);
-  font-weight: 600;
-  font-size: .78rem;
-}
+.player-name { font-weight: 700; color: var(--white); font-size: .92rem; margin-bottom: 3px; }
+.player-coins { color: var(--text-2); font-weight: 600; font-size: .78rem; }
