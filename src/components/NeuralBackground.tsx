@@ -15,7 +15,11 @@ export default function NeuralBackground() {
 
   // Reduce node count on mobile for better performance
   const nodeCount = useMemo(() => {
-    return window.innerWidth < 768 ? 8 : 12
+    try {
+      return window.innerWidth < 768 ? 8 : 12
+    } catch {
+      return 8
+    }
   }, [])
 
   const createNodes = useCallback(() => {

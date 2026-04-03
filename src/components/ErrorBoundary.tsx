@@ -17,7 +17,8 @@ export default class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, info: ErrorInfo) {
-    console.error('App error:', error, info)
+    console.error('App error:', error.message, error.stack)
+    console.error('Component stack:', info.componentStack)
   }
 
   render() {
@@ -36,9 +37,14 @@ export default class ErrorBoundary extends Component<Props, State> {
         }}>
           <img src="/Steamreublic.png" alt="Steam Republic" style={{ width: 80, marginBottom: 24 }} />
           <h1 style={{ fontSize: '1.5rem', marginBottom: 12 }}>Something went wrong</h1>
-          <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: 24 }}>
+          <p style={{ color: 'rgba(255,255,255,0.7)', marginBottom: 8 }}>
             We hit an unexpected error. Please refresh the page.
           </p>
+          {this.state.error && (
+            <p style={{ color: 'rgba(255,100,100,0.8)', fontSize: '12px', marginBottom: 24, maxWidth: 400 }}>
+              {this.state.error.message}
+            </p>
+          )}
           <button
             onClick={() => window.location.reload()}
             style={{

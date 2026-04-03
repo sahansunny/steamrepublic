@@ -29,7 +29,11 @@ export default function ParticleSystem() {
 
   // Reduce particle count on mobile for better performance
   const maxParticles = useMemo(() => {
-    return window.innerWidth < 768 ? 20 : 35
+    try {
+      return window.innerWidth < 768 ? 20 : 35
+    } catch {
+      return 20
+    }
   }, [])
 
   const createParticle = useCallback((id: number): Particle => {

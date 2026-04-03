@@ -11,6 +11,13 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 }
 
+// Guard: warn clearly if env vars are missing
+if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+  console.error(
+    '❌ Firebase env vars missing. Make sure VITE_FIREBASE_API_KEY and other VITE_FIREBASE_* vars are set in your .env file or deployment environment.'
+  )
+}
+
 const app = initializeApp(firebaseConfig)
 
 export const db = getFirestore(app)
