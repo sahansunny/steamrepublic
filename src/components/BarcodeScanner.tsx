@@ -19,7 +19,7 @@ export default function BarcodeScanner({ onScanComplete }: BarcodeScannerProps) 
   const [processing, setProcessing] = useState(false)
   const [cameraState, setCameraState] = useState<CameraState>('idle')
   const [cameraError, setCameraError] = useState<string | null>(null)
-  const [result, setResult] = useState<{ success: boolean; message: string; user?: User } | null>(null)
+  const [result, setResult] = useState<{ success: boolean; message: string; secondPlateFree?: boolean; user?: User } | null>(null)
 
   const scannerRef = useRef<Html5Qrcode | null>(null)
 
@@ -224,6 +224,11 @@ export default function BarcodeScanner({ onScanComplete }: BarcodeScannerProps) 
           <div className="result-icon">{result.success ? '✅' : '❌'}</div>
           <div className="result-content">
             <p className="result-message">{result.message}</p>
+            {result.success && result.secondPlateFree && (
+              <div className="second-plate-banner">
+                🍽️ 2nd Plate FREE — Give the customer their free plate!
+              </div>
+            )}
             {result.success && result.user && (
               <div className="user-info">
                 <span className="user-name">{result.user.name}</span>

@@ -67,7 +67,7 @@ export const subscribeToUser = (userId: string, callback: (user: User | null) =>
 }
 
 // Process barcode scan and award coins
-export const processBarcodeVisit = async (barcode: string): Promise<{ success: boolean; message: string; user?: User }> => {
+export const processBarcodeVisit = async (barcode: string): Promise<{ success: boolean; message: string; secondPlateFree?: boolean; user?: User }> => {
   try {
     // Find user by barcode
     const usersRef = collection(db, 'users')
@@ -138,6 +138,7 @@ export const processBarcodeVisit = async (barcode: string): Promise<{ success: b
     return {
       success: true,
       message: `Welcome ${userData.name}! +${visitCoins} coins awarded. Total: ${newCoins} coins`,
+      secondPlateFree: true,
       user: updatedUser || undefined
     }
   } catch (error) {
@@ -182,42 +183,37 @@ export const getUserByMobile = async (mobile: string): Promise<User | null> => {
 }
 
 export const getUserById = async (userId: string): Promise<User | null> => {
-  try {
-    // Check cache first
-    const cached = userCache.get(userId)
-    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
-      return cached.data
-    }
-
-    const userDoc = await getDoc(doc(db, 'users', userId))
-    if (!userDoc.exists()) return null
-    
-    // Get limited recent history for better performance
-    const historyRef = collection(db, 'users', userId, 'history')
-    const historyQuery = query(historyRef, orderBy('date', 'desc'), limit(20)) // Limit to 20 recent transactions
-    const historySnapshot = await getDocs(historyQuery)
-    
-    const history: Transaction[] = []
-    historySnapshot.forEach((doc) => {
-      const data = doc.data()
-      if (data.coins) { // Skip the init document
-        history.push(data as Transaction)
-      }
-    })
-    
-    const user = {
-      ...userDoc.data(),
-      history
-    } as User
-
-    // Cache the result
-    userCache.set(userId, { data: user, timestamp: Date.now() })
-    
-    return user
-  } catch (error) {
-    console.error('Error fetching user:', error)
-    return null
+  // Check cache first
+  const cached = userCache.get(userId)
+  if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+    return cached.data
   }
+
+  const userDoc = await getDoc(doc(db, 'users', userId))
+  if (!userDoc.exists()) return null
+
+  // Get limited recent history for better performance
+  const historyRef = collection(db, 'users', userId, 'history')
+  const historyQuery = query(historyRef, orderBy('date', 'desc'), limit(20))
+  const historySnapshot = await getDocs(historyQuery)
+
+  const history: Transaction[] = []
+  historySnapshot.forEach((doc) => {
+    const data = doc.data()
+    if (data.coins) { // Skip the init document
+      history.push(data as Transaction)
+    }
+  })
+
+  const user = {
+    ...userDoc.data(),
+    history
+  } as User
+
+  // Cache the result
+  userCache.set(userId, { data: user, timestamp: Date.now() })
+
+  return user
 }
 
 export const updateUserCoins = async (
@@ -326,6 +322,10 @@ export const redeemReward = async (
 // Cache for all users data
 let allUsersCache: { data: Record<string, User>; timestamp: number } | null = null
 
+// Call this whenever a user's profile changes to force leaderboard refresh
+export const clearAllUsersCache = () => { allUsersCache = null }
+
+// Lightweight user fetch for leaderboard — no history subcollection
 export const getAllUsers = async (): Promise<Record<string, User>> => {
   try {
     // Check cache first
@@ -335,44 +335,31 @@ export const getAllUsers = async (): Promise<Record<string, User>> => {
 
     const usersRef = collection(db, 'users')
     const snapshot = await getDocs(usersRef)
-    
-    const users: Record<string, User> = {}
-    
-    // Process users in parallel for better performance
-    const userPromises = snapshot.docs.map(async (doc) => {
-      const userData = doc.data()
-      
-      // Get limited recent history for each user
-      const historyRef = collection(db, 'users', doc.id, 'history')
-      const historyQuery = query(historyRef, orderBy('date', 'desc'), limit(10)) // Reduced limit
-      const historySnapshot = await getDocs(historyQuery)
-      
-      const history: Transaction[] = []
-      historySnapshot.forEach((historyDoc) => {
-        const data = historyDoc.data()
-        if (data.coins) {
-          history.push(data as Transaction)
-        }
-      })
-      
-      return {
-        id: doc.id,
-        user: {
-          ...userData,
-          history
-        } as User
-      }
-    })
 
-    const userResults = await Promise.all(userPromises)
-    
-    userResults.forEach(({ id, user }) => {
-      users[id] = user
+    const users: Record<string, User> = {}
+
+    snapshot.docs.forEach((doc) => {
+      const userData = doc.data()
+      // Only load fields needed for leaderboard — skip history subcollection entirely
+      users[doc.id] = {
+        id: doc.id,
+        name: userData.name || '',
+        mobile: userData.mobile || '',
+        email: userData.email || '',
+        coins: userData.coins || 0,
+        visits: userData.visits || 0,
+        streak: userData.streak || 0,
+        barcode: userData.barcode,
+        createdAt: userData.createdAt || '',
+        lastClaimDate: userData.lastClaimDate,
+        claimsToday: userData.claimsToday,
+        history: [] // not needed for leaderboard
+      } as User
     })
 
     // Cache the result
     allUsersCache = { data: users, timestamp: Date.now() }
-    
+
     return users
   } catch (error) {
     console.error('Error fetching all users:', error)

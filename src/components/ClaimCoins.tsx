@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { doc, runTransaction } from 'firebase/firestore'
+import { doc, runTransaction, addDoc, collection } from 'firebase/firestore'
 import { db } from '../firebase'
 import './ClaimCoins.css'
 
@@ -26,7 +26,7 @@ export default function ClaimCoins({ userId, onClaimSuccess, onBack }: ClaimCoin
 
     try {
       // Use a transaction so code-used + coins-awarded are atomic
-      const coinsAwarded = await runTransaction(db, async (transaction) => {
+      const { coinsAwarded } = await runTransaction(db, async (transaction) => {
         const codeRef = doc(db, 'purchaseCodes', trimmed)
         const userRef = doc(db, 'users', userId)
 
@@ -62,7 +62,15 @@ export default function ClaimCoins({ userId, onClaimSuccess, onBack }: ClaimCoin
           claimsToday: userData.lastClaimDate === today ? (userData.claimsToday || 0) + 1 : 1
         })
 
-        return codeData.coins as number
+        return { coinsAwarded: codeData.coins as number }
+      })
+
+      // Write history entry after transaction commits (addDoc can't run inside transaction)
+      await addDoc(collection(db, 'users', userId, 'history'), {
+        coins: coinsAwarded,
+        reason: `Purchase Code: ${trimmed}`,
+        code: trimmed,
+        date: new Date().toISOString()
       })
 
       onClaimSuccess(coinsAwarded, trimmed)

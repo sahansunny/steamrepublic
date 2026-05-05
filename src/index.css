@@ -180,3 +180,9 @@ input::placeholder, textarea::placeholder { color: var(--text-3) !important; }
     transition-duration: 0.01ms !important;
   }
 }
+
+/* PWA Install Prompt animation */
+@keyframes slideUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}

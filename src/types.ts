@@ -11,6 +11,7 @@ export interface User {
   createdAt: string;
   lastClaimDate?: string;
   claimsToday?: number;
+  nameSet?: boolean; // true once user has saved their name — cannot change after
 }
 
 export interface Transaction {

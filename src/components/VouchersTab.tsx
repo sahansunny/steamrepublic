@@ -10,6 +10,7 @@ interface VouchersTabProps {
 export default function VouchersTab({ userId }: VouchersTabProps) {
   const [vouchers, setVouchers] = useState<RedemptionVoucher[]>([])
   const [loading, setLoading] = useState(true)
+  const [copyToast, setCopyToast] = useState('')
 
   useEffect(() => {
     const loadVouchers = async () => {
@@ -39,9 +40,20 @@ export default function VouchersTab({ userId }: VouchersTabProps) {
     }
   }
 
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text)
-    alert('Voucher code copied to clipboard!')
+  const copyToClipboard = async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text)
+    } catch {
+      // Fallback for older browsers
+      const el = document.createElement('textarea')
+      el.value = text
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
+    }
+    setCopyToast('Voucher code copied!')
+    setTimeout(() => setCopyToast(''), 2500)
   }
 
   if (loading) {
@@ -50,6 +62,16 @@ export default function VouchersTab({ userId }: VouchersTabProps) {
 
   return (
     <div>
+      {copyToast && (
+        <div style={{
+          position: 'fixed', bottom: 80, left: '50%', transform: 'translateX(-50%)',
+          background: 'rgba(16,185,129,0.95)', color: '#fff', padding: '10px 20px',
+          borderRadius: 12, fontSize: 13, fontWeight: 600, zIndex: 9999,
+          boxShadow: '0 4px 16px rgba(0,0,0,0.3)', whiteSpace: 'nowrap'
+        }}>
+          📋 {copyToast}
+        </div>
+      )}
       <h3>Your Vouchers</h3>
       {vouchers.length === 0 ? (
         <div className="no-vouchers">

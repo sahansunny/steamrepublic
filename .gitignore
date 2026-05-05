@@ -27,3 +27,6 @@ dist-ssr
 .env
 .env.local
 .env.production
+
+# One-time setup scripts (contain sensitive data)
+setup-admins.js

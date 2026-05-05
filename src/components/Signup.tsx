@@ -18,9 +18,7 @@ export default function Signup({ onSignupSuccess, onSwitchToLogin, onShowPrivacy
   const sanitize = (str: string) => str.replace(/[<>'"]/g, '').trim()
 
   const validateForm = () => {
-    if (!formData.name.trim()) { setError('Please enter your name'); return false }
     if (!formData.mobile.trim() || formData.mobile.length !== 10) { setError('Please enter a valid 10-digit mobile number'); return false }
-    if (!formData.email.trim() || !formData.email.includes('@')) { setError('Please enter a valid email address'); return false }
     if (!consentGiven) { setError('Please accept the privacy policy to continue'); return false }
     return true
   }
@@ -38,13 +36,17 @@ export default function Signup({ onSignupSuccess, onSwitchToLogin, onShowPrivacy
         setLoading(false)
         return
       }
-      const userId = `USER${formData.mobile}`
+      // userId uses mobile only at signup — name added later via profile
+      const cleanName = formData.name.trim()
+        ? sanitize(formData.name).replace(/\s+/g, '_').replace(/[^a-zA-Z0-9_]/g, '').slice(0, 20)
+        : 'User'
+      const userId = `USER_${cleanName}_${formData.mobile}`
       const userBarcode = generateUserBarcode(userId, formData.mobile)
       await setDoc(doc(db, 'users', userId), {
         id: userId,
-        name: sanitize(formData.name),
+        name: sanitize(formData.name) || '',
         mobile: formData.mobile.trim(),
-        email: sanitize(formData.email).toLowerCase(),
+        email: sanitize(formData.email).toLowerCase() || '',
         barcode: userBarcode,
         coins: 0, visits: 0, streak: 0,
         createdAt: new Date().toISOString(),
@@ -121,17 +123,17 @@ export default function Signup({ onSignupSuccess, onSwitchToLogin, onShowPrivacy
 
       <div style={s.card} className="su-card" role="form" aria-label="Sign up form">
         <div style={s.fg}>
-          <label htmlFor="su-name" style={s.label}>Full Name</label>
+          <label htmlFor="su-mobile" style={s.label}>Mobile Number <span style={{color:'#ffd700'}}>*</span></label>
+          <input id="su-mobile" type="tel" value={formData.mobile} onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) })} placeholder="10-digit mobile number" maxLength={10} disabled={loading} autoComplete="tel" inputMode="numeric" style={s.input} className="su-input" autoFocus />
+        </div>
+
+        <div style={s.fg}>
+          <label htmlFor="su-name" style={s.label}>Full Name <span style={{color:'rgba(255,255,255,0.3)',fontWeight:400,fontSize:9.5,letterSpacing:1}}>(optional — add later in profile)</span></label>
           <input id="su-name" type="text" value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} placeholder="Enter your name" disabled={loading} autoComplete="name" style={s.input} className="su-input" />
         </div>
 
         <div style={s.fg}>
-          <label htmlFor="su-mobile" style={s.label}>Mobile Number</label>
-          <input id="su-mobile" type="tel" value={formData.mobile} onChange={(e) => setFormData({ ...formData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) })} placeholder="10-digit mobile number" maxLength={10} disabled={loading} autoComplete="tel" inputMode="numeric" style={s.input} className="su-input" />
-        </div>
-
-        <div style={s.fg}>
-          <label htmlFor="su-email" style={s.label}>Email Address</label>
+          <label htmlFor="su-email" style={s.label}>Email Address <span style={{color:'rgba(255,255,255,0.3)',fontWeight:400,fontSize:9.5,letterSpacing:1}}>(optional)</span></label>
           <input id="su-email" type="email" value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} onKeyDown={(e) => e.key === 'Enter' && handleSignup()} placeholder="your@email.com" disabled={loading} autoComplete="email" style={s.input} className="su-input" />
         </div>
 

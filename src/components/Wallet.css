@@ -4,8 +4,17 @@
 .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; animation: slideIn .5s ease-out; }
 .header h2 { font-family: 'Orbitron','Inter',sans-serif; color: var(--white); font-size: clamp(1.4rem,5vw,2.2rem); font-weight: 900; letter-spacing: -.5px; animation: glow 6s ease-in-out infinite; will-change: text-shadow; }
 
+.header-actions { display: flex; gap: 8px; align-items: center; }
+
+.profile-btn { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--text-2); border: 1px solid var(--border); padding: 9px 16px; border-radius: var(--radius-sm); cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; transition: background .22s ease, color .22s ease, transform .22s ease; }
+.profile-btn:hover { background: rgba(255,215,0,0.12); color: #ffd700; transform: translateY(-2px); border-color: rgba(255,215,0,0.3); }
+
 .logout-btn { background: var(--glass); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: var(--text-2); border: 1px solid var(--border); padding: 9px 20px; border-radius: var(--radius-sm); cursor: pointer; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; transition: background .22s ease, color .22s ease, transform .22s ease; }
 .logout-btn:hover { background: var(--glass-hover); color: var(--white); transform: translateY(-2px); border-color: rgba(255,255,255,0.2); }
+
+/* Profile incomplete nudge */
+.profile-nudge { background: rgba(255,215,0,0.10); border: 1px solid rgba(255,215,0,0.25); border-radius: var(--radius-sm); padding: 11px 16px; margin-bottom: 16px; color: #ffd700; font-size: 13px; font-weight: 600; cursor: pointer; text-align: center; transition: background .2s; animation: fadeIn .4s ease-out; }
+.profile-nudge:hover { background: rgba(255,215,0,0.18); }
 
 .claim-coins-btn { width: 100%; padding: clamp(15px,3vw,19px); font-size: clamp(13px,2.5vw,15px); font-weight: 800; background: linear-gradient(135deg,#48bb78 0%,#2f855a 100%); color: var(--white); border: none; border-radius: var(--radius-md); cursor: pointer; margin-bottom: 18px; letter-spacing: 1px; text-transform: uppercase; position: relative; overflow: hidden; transition: transform .22s ease, box-shadow .22s ease; box-shadow: 0 6px 24px rgba(72,187,120,0.3); animation: slideIn .5s ease-out .12s both; }
 .claim-coins-btn::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(255,255,255,0.14) 0%,transparent 55%); border-radius: inherit; opacity: 0; transition: opacity .22s ease; }
@@ -25,7 +34,7 @@
 .barcode-header h3 { color: var(--white); font-family: 'Orbitron',sans-serif; font-size: clamp(.95rem,3vw,1.2rem); font-weight: 700; margin-bottom: 5px; text-shadow: 0 0 14px var(--gold-glow); letter-spacing: .5px; }
 .barcode-header p { color: var(--text-2); font-size: .82rem; margin: 0; }
 .barcode-info { margin-top: 10px; }
-.barcode-info p { color: var(--text-3); font-size: .78rem; font-style: italic; margin: 0; }
+.barcode-info p { color: #ffffff; font-size: 1rem; font-style: normal; font-weight: 700; margin: 0; letter-spacing: 0.3px; text-shadow: 0 0 12px rgba(255,215,0,0.5); }
 .user-barcode-section .barcode-container { background: rgba(255,255,255,0.97); border: 1px solid rgba(255,215,0,0.25); box-shadow: 0 4px 20px rgba(0,0,0,0.3); max-width: 190px; margin: 0 auto; border-radius: var(--radius-sm); padding: 8px; }
 
 /* Footer */
@@ -35,4 +44,4 @@
 .footer-sep { color: rgba(255,255,255,0.18); font-size: .78rem; }
 .footer-copy { color: rgba(255,255,255,0.22); font-size: .78rem; }
 
-@media (max-width: 600px) { .header { flex-direction: column; gap: 10px; text-align: center; margin-bottom: 18px; } .logout-btn { width: 100%; max-width: 150px; } .tab-content { margin-top: 4px; } }
+@media (max-width: 600px) { .header { flex-direction: column; gap: 10px; text-align: center; margin-bottom: 18px; } .header-actions { width: 100%; justify-content: center; } .logout-btn, .profile-btn { flex: 1; max-width: 140px; } .tab-content { margin-top: 4px; } }

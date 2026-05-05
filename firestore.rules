@@ -19,15 +19,11 @@ service cloud.firestore {
       allow create: if request.resource.data.keys().hasAll(['id', 'name', 'mobile', 'email', 'coins', 'visits', 'streak', 'createdAt'])
                     && request.resource.data.mobile is string
                     && request.resource.data.mobile.size() == 10
-                    && request.resource.data.email is string
-                    && isValidEmail(request.resource.data.email)
                     && request.resource.data.coins == 0
                     && request.resource.data.visits == 0
-                    && request.resource.data.id == 'USER' + request.resource.data.mobile;
+                    && request.resource.data.id.matches('USER_.*_' + request.resource.data.mobile);
 
       // Update: prevent direct coin manipulation from client
-      // Coins can only increase by a bounded amount per update (max 50 per operation)
-      // and visits can only increment by 1
       allow update: if
         // Coins can only go up by at most 50 per write (prevents bulk manipulation)
         (request.resource.data.coins - resource.data.coins) <= 50

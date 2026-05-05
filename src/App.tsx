@@ -4,7 +4,8 @@ import Notification from './components/Notification.tsx'
 import ConfirmDialog from './components/ConfirmDialog.tsx'
 import PrivacyPolicy from './components/PrivacyPolicy.tsx'
 import OfflineBanner from './components/OfflineBanner.tsx'
-import { getUserById, updateUserCoins, getAllUsers, redeemReward, subscribeToUser } from './services/userService'
+import InstallPrompt from './components/InstallPrompt.tsx'
+import { getUserById, updateUserCoins, getAllUsers, redeemReward, subscribeToUser, clearAllUsersCache } from './services/userService'
 import { User } from './types.ts'
 
 // Lazy load components for better performance
@@ -38,11 +39,32 @@ function App() {
   const [currentAdmin, setCurrentAdmin] = useState<{ id: string; role: string } | null>(null)
   const [allUsers, setAllUsers] = useState<Record<string, User>>({})
   const [currentScreen, setCurrentScreen] = useState<Screen>('login')
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true) // start true so we restore session first
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
   const [confirmLogout, setConfirmLogout] = useState<(() => void) | null>(null)
   const [showPrivacy, setShowPrivacy] = useState(false)
   const [isOffline, setIsOffline] = useState(!navigator.onLine)
+
+  // ── Restore session on refresh ──
+  useEffect(() => {
+    const restoreSession = async () => {
+      const savedUserId = localStorage.getItem('momowallet_userId')
+      if (savedUserId) {
+        try {
+          const user = await getUserById(savedUserId)
+          if (user) {
+            setCurrentUser(user)
+            setCurrentScreen('wallet')
+            loadAllUsers()
+          }
+        } catch {
+          localStorage.removeItem('momowallet_userId')
+        }
+      }
+      setLoading(false)
+    }
+    restoreSession()
+  }, [])
 
   // Offline detection
   useEffect(() => {
@@ -93,7 +115,6 @@ function App() {
 
   useEffect(() => {
     loadAllUsers()
-    scrollToTop()
   }, [])
 
   // Scroll to top whenever screen changes
@@ -119,11 +140,20 @@ function App() {
   const handleSignupSuccess = async (userId: string) => {
     setLoading(true)
     scrollToTop()
-    const user = await getUserById(userId)
-    if (user) {
-      setCurrentUser(user)
-      setCurrentScreen('wallet')
-      await loadAllUsers()
+    try {
+      const user = await getUserById(userId)
+      if (user) {
+        localStorage.setItem('momowallet_userId', userId)
+        setCurrentUser(user)
+        setCurrentScreen('wallet')
+        await loadAllUsers()
+      } else {
+        showNotification('Account created but failed to load profile. Please try logging in.', 'error')
+        setCurrentScreen('login')
+      }
+    } catch (err: any) {
+      showNotification(err.message || 'Failed to load profile after signup. Please try logging in.', 'error')
+      setCurrentScreen('login')
     }
     setLoading(false)
     scrollToTop()
@@ -132,11 +162,18 @@ function App() {
   const handleLoginSuccess = async (userId: string) => {
     setLoading(true)
     scrollToTop()
-    const user = await getUserById(userId)
-    if (user) {
-      setCurrentUser(user)
-      setCurrentScreen('wallet')
-      await loadAllUsers()
+    try {
+      const user = await getUserById(userId)
+      if (user) {
+        localStorage.setItem('momowallet_userId', userId)
+        setCurrentUser(user)
+        setCurrentScreen('wallet')
+        await loadAllUsers()
+      } else {
+        showNotification('Login succeeded but failed to load your profile. Please try again.', 'error')
+      }
+    } catch (err: any) {
+      showNotification(err.message || 'Failed to load profile. Please try again.', 'error')
     }
     setLoading(false)
     scrollToTop()
@@ -149,6 +186,7 @@ function App() {
 
   const handleLogout = () => {
     requestLogout(() => {
+      localStorage.removeItem('momowallet_userId')
       setCurrentUser(null)
       setCurrentScreen('login')
       scrollToTop()
@@ -220,6 +258,7 @@ function App() {
     return (
       <main id="main-content">
         {isOffline && <OfflineBanner />}
+        <InstallPrompt />
         <UltimateLoader />
       </main>
     )
@@ -397,6 +436,7 @@ function App() {
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
         <ParticleSystem />
+        <InstallPrompt />
         <main id="main-content">
           <Login 
             onLoginSuccess={handleLoginSuccess}
@@ -448,6 +488,7 @@ function App() {
         {isOffline && <OfflineBanner />}
         <NeuralBackground />
         <ParticleSystem />
+        <InstallPrompt />
         <main id="main-content">
           <Wallet
             user={currentUser}
@@ -459,6 +500,11 @@ function App() {
             }}
             onRedeemReward={handleRedeemReward}
             onShowPrivacy={() => setShowPrivacy(true)}
+            onUserUpdated={(updates) => {
+              clearAllUsersCache()
+              setCurrentUser(prev => prev ? { ...prev, ...updates } : prev)
+              loadAllUsers()
+            }}
           />
         </main>
         {notification && (
