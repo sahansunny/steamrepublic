@@ -67,7 +67,7 @@ export const subscribeToUser = (userId: string, callback: (user: User | null) =>
 }
 
 // Process barcode scan and award coins
-export const processBarcodeVisit = async (barcode: string): Promise<{ success: boolean; message: string; secondPlateFree?: boolean; user?: User }> => {
+export const processBarcodeVisit = async (barcode: string): Promise<{ success: boolean; message: string; user?: User }> => {
   try {
     // Find user by barcode
     const usersRef = collection(db, 'users')
@@ -138,7 +138,6 @@ export const processBarcodeVisit = async (barcode: string): Promise<{ success: b
     return {
       success: true,
       message: `Welcome ${userData.name}! +${visitCoins} coins awarded. Total: ${newCoins} coins`,
-      secondPlateFree: true,
       user: updatedUser || undefined
     }
   } catch (error) {
