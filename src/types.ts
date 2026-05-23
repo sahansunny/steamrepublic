@@ -55,3 +55,14 @@ export interface RedemptionVoucher {
   fulfilledBy?: string;
   expiresAt: string;
 }
+
+export interface Customer {
+  id: string;
+  name: string;
+  mobile: string;
+  coins: number;
+  visits: number;
+  streak: number;
+  createdAt: string;
+  lastVisitTime?: string;
+}

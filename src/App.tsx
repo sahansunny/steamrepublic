@@ -1,14 +1,16 @@
-import { useState, useEffect, Suspense, lazy } from 'react'
+import { useState, useEffect, useRef, Suspense, lazy } from 'react'
 import UltimateLoader from './components/UltimateLoader.tsx'
 import Notification from './components/Notification.tsx'
 import ConfirmDialog from './components/ConfirmDialog.tsx'
 import PrivacyPolicy from './components/PrivacyPolicy.tsx'
 import OfflineBanner from './components/OfflineBanner.tsx'
 import InstallPrompt from './components/InstallPrompt.tsx'
+import AppNav from './components/AppNav.tsx'
 import { getUserById, updateUserCoins, getAllUsers, redeemReward, subscribeToUser, clearAllUsersCache } from './services/userService'
 import { User } from './types.ts'
 
 // Lazy load components for better performance
+const HomePage = lazy(() => import('./components/HomePage.tsx'))
 const Signup = lazy(() => import('./components/Signup.tsx'))
 const Login = lazy(() => import('./components/Login.tsx'))
 const Wallet = lazy(() => import('./components/Wallet.tsx'))
@@ -20,8 +22,9 @@ const CodeGenerator = lazy(() => import('./components/CodeGenerator.tsx'))
 const StaffDashboard = lazy(() => import('./components/StaffDashboard.tsx'))
 const ParticleSystem = lazy(() => import('./components/ParticleSystem.tsx'))
 const NeuralBackground = lazy(() => import('./components/NeuralBackground.tsx'))
+const OwnerDashboard = lazy(() => import('./components/dashboard/OwnerDashboard.tsx'))
 
-type Screen = 'signup' | 'login' | 'wallet' | 'admin-login' | 'admin' | 'claim' | 'generator' | 'staff'
+type Screen = 'home' | 'signup' | 'login' | 'wallet' | 'admin-login' | 'admin' | 'claim' | 'generator' | 'staff' | 'dashboard'
 
 // Simplified scroll to top utility function
 const scrollToTop = () => {
@@ -38,12 +41,14 @@ function App() {
   const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [currentAdmin, setCurrentAdmin] = useState<{ id: string; role: string } | null>(null)
   const [allUsers, setAllUsers] = useState<Record<string, User>>({})
-  const [currentScreen, setCurrentScreen] = useState<Screen>('login')
+  const [currentScreen, setCurrentScreen] = useState<Screen>('home')
   const [loading, setLoading] = useState(true) // start true so we restore session first
   const [notification, setNotification] = useState<{ message: string; type: 'success' | 'error' | 'info' } | null>(null)
   const [confirmLogout, setConfirmLogout] = useState<(() => void) | null>(null)
   const [showPrivacy, setShowPrivacy] = useState(false)
   const [isOffline, setIsOffline] = useState(!navigator.onLine)
+  // tracks whether the user clicked Dashboard (so we redirect there after owner login)
+  const pendingDashboard = useRef(false)
 
   // ── Restore session on refresh ──
   useEffect(() => {
@@ -61,6 +66,7 @@ function App() {
           localStorage.removeItem('momowallet_userId')
         }
       }
+      // No saved session — stay on home page
       setLoading(false)
     }
     restoreSession()
@@ -188,7 +194,7 @@ function App() {
     requestLogout(() => {
       localStorage.removeItem('momowallet_userId')
       setCurrentUser(null)
-      setCurrentScreen('login')
+      setCurrentScreen('home')
       scrollToTop()
     })
   }
@@ -199,6 +205,9 @@ function App() {
     // Route based on role
     if (role === 'staff') {
       setCurrentScreen('staff')
+    } else if (role === 'owner' && pendingDashboard.current) {
+      pendingDashboard.current = false
+      setCurrentScreen('dashboard')
     } else {
       setCurrentScreen('admin')
     }
@@ -264,12 +273,45 @@ function App() {
     )
   }
 
+  // Home Page Screen
+  if (currentScreen === 'home') {
+    return (
+      <Suspense fallback={<UltimateLoader />}>
+        <NeuralBackground />
+        <ParticleSystem />
+        <InstallPrompt />
+        <main id="main-content">
+          <HomePage
+            onLogin={() => { scrollToTop(); setCurrentScreen('login') }}
+            onSignup={() => { scrollToTop(); setCurrentScreen('signup') }}
+            onDashboard={() => {
+              // If already logged in as owner, go straight to dashboard
+              if (currentAdmin?.role === 'owner') {
+                scrollToTop(); setCurrentScreen('dashboard')
+              } else {
+                pendingDashboard.current = true
+                scrollToTop(); setCurrentScreen('admin-login')
+              }
+            }}
+          />
+        </main>
+        {notification && (
+          <Notification message={notification.message} type={notification.type} onClose={() => setNotification(null)} />
+        )}
+        {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
+      </Suspense>
+    )
+  }
+
   // Admin Login Screen
   if (currentScreen === 'admin-login') {
     // If already logged in, redirect to appropriate screen
     if (currentAdmin) {
       if (currentAdmin.role === 'staff') {
         setCurrentScreen('staff')
+      } else if (currentAdmin.role === 'owner' && pendingDashboard.current) {
+        pendingDashboard.current = false
+        setCurrentScreen('dashboard')
       } else {
         setCurrentScreen('admin')
       }
@@ -280,12 +322,19 @@ function App() {
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
         <ParticleSystem />
-        <main id="main-content">
+        <AppNav
+          onHome={() => { pendingDashboard.current = false; scrollToTop(); setCurrentScreen('home') }}
+          onLogin={() => { pendingDashboard.current = false; scrollToTop(); setCurrentScreen('login') }}
+          onSignup={() => { pendingDashboard.current = false; scrollToTop(); setCurrentScreen('signup') }}
+        />
+        <main id="main-content" style={{ paddingTop: '64px' }}>
           <AdminLogin
             onLoginSuccess={handleAdminLoginSuccess}
+            isDashboardAccess={pendingDashboard.current}
           />
         </main>
         <AdminToggle onClick={() => {
+          pendingDashboard.current = false
           scrollToTop()
           setCurrentScreen(currentUser ? 'wallet' : 'login')
         }} />
@@ -308,15 +357,23 @@ function App() {
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
         <main id="main-content">
-          <AdminPanel
-            onAddCoins={handleAddCoins}
-            onBack={handleAdminLogout}
-            onStaffDashboard={() => {
-              scrollToTop()
-              setCurrentScreen('staff')
-            }}
-            adminRole={currentAdmin.role}
+          <AppNav
+            onHome={() => { scrollToTop(); setCurrentScreen('home') }}
+            isAdmin={true}
+            onLogout={handleAdminLogout}
           />
+          <div style={{ paddingTop: '64px' }}>
+            <AdminPanel
+              onAddCoins={handleAddCoins}
+              onBack={handleAdminLogout}
+              onStaffDashboard={() => {
+                scrollToTop()
+                setCurrentScreen('staff')
+              }}
+              adminRole={currentAdmin.role}
+              onHome={() => setCurrentScreen('home')}
+            />
+          </div>
         </main>
         {confirmLogout && (
           <ConfirmDialog
@@ -343,7 +400,12 @@ function App() {
     return (
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
-        <main id="main-content">
+        <AppNav
+          onHome={() => { scrollToTop(); setCurrentScreen('home') }}
+          isAdmin={true}
+          onLogout={() => requestLogout(() => { setCurrentAdmin(null); setCurrentScreen('admin-login'); scrollToTop() })}
+        />
+        <main id="main-content" style={{ paddingTop: '64px' }}>
           <StaffDashboard
             staffId={currentAdmin.id}
             onBack={() => {
@@ -388,7 +450,12 @@ function App() {
     return (
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
-        <main id="main-content">
+        <AppNav
+          onHome={() => { scrollToTop(); setCurrentScreen('home') }}
+          isAdmin={true}
+          onLogout={handleAdminLogout}
+        />
+        <main id="main-content" style={{ paddingTop: '64px' }}>
           <CodeGenerator onBack={() => {
             scrollToTop()
             setCurrentScreen('admin')
@@ -408,7 +475,12 @@ function App() {
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
         <ParticleSystem />
-        <main id="main-content">
+        <AppNav
+          onHome={() => { scrollToTop(); setCurrentScreen('home') }}
+          onLogin={() => { scrollToTop(); setCurrentScreen('login') }}
+          onSignup={() => { scrollToTop(); setCurrentScreen('signup') }}
+        />
+        <main id="main-content" style={{ paddingTop: '64px' }}>
           <Signup 
             onSignupSuccess={handleSignupSuccess}
             onSwitchToLogin={() => {
@@ -416,6 +488,10 @@ function App() {
               setCurrentScreen('login')
             }}
             onShowPrivacy={() => setShowPrivacy(true)}
+            onHome={() => {
+              scrollToTop()
+              setCurrentScreen('home')
+            }}
           />
         </main>
         <AdminToggle onClick={() => {
@@ -437,7 +513,12 @@ function App() {
         <NeuralBackground />
         <ParticleSystem />
         <InstallPrompt />
-        <main id="main-content">
+        <AppNav
+          onHome={() => { scrollToTop(); setCurrentScreen('home') }}
+          onLogin={() => { scrollToTop(); setCurrentScreen('login') }}
+          onSignup={() => { scrollToTop(); setCurrentScreen('signup') }}
+        />
+        <main id="main-content" style={{ paddingTop: '64px' }}>
           <Login 
             onLoginSuccess={handleLoginSuccess}
             onSwitchToSignup={() => {
@@ -447,6 +528,10 @@ function App() {
             onAdminAccess={() => {
               scrollToTop()
               setCurrentScreen('admin-login')
+            }}
+            onHome={() => {
+              scrollToTop()
+              setCurrentScreen('home')
             }}
           />
         </main>
@@ -463,7 +548,13 @@ function App() {
     return (
       <Suspense fallback={<UltimateLoader />}>
         <NeuralBackground />
-        <main id="main-content">
+        <AppNav
+          onHome={() => { scrollToTop(); setCurrentScreen('home') }}
+          isLoggedIn={true}
+          userName={currentUser.name || currentUser.mobile}
+          onLogout={handleLogout}
+        />
+        <main id="main-content" style={{ paddingTop: '64px' }}>
           <ClaimCoins 
             userId={currentUser.id}
             onClaimSuccess={handleClaimSuccess}
@@ -489,7 +580,13 @@ function App() {
         <NeuralBackground />
         <ParticleSystem />
         <InstallPrompt />
-        <main id="main-content">
+        <AppNav
+          onHome={() => { scrollToTop(); setCurrentScreen('home') }}
+          isLoggedIn={true}
+          userName={currentUser.name || currentUser.mobile}
+          onLogout={handleLogout}
+        />
+        <main id="main-content" style={{ paddingTop: '64px' }}>
           <Wallet
             user={currentUser}
             allUsers={allUsers}
@@ -522,6 +619,15 @@ function App() {
           />
         )}
         {showPrivacy && <PrivacyPolicy onClose={() => setShowPrivacy(false)} />}
+      </Suspense>
+    )
+  }
+
+  // Dashboard Screen
+  if (currentScreen === 'dashboard') {
+    return (
+      <Suspense fallback={<UltimateLoader />}>
+        <OwnerDashboard onBack={() => { scrollToTop(); setCurrentScreen('home') }} />
       </Suspense>
     )
   }

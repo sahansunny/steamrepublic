@@ -5,12 +5,13 @@ import './AdminLogin.css'
 
 interface AdminLoginProps {
   onLoginSuccess: (adminId: string, role: string) => void
+  isDashboardAccess?: boolean
 }
 
 const MAX_ATTEMPTS = 5
 const LOCKOUT_MS = 5 * 60 * 1000 // 5 minutes
 
-export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
+export default function AdminLogin({ onLoginSuccess, isDashboardAccess }: AdminLoginProps) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
@@ -68,6 +69,13 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
       attempts.current = 0
       lockedUntil.current = null
 
+      // If this is a dashboard access request, only owners are allowed
+      if (isDashboardAccess && adminData.role !== 'owner') {
+        setError('Dashboard access is restricted to owners only.')
+        setLoading(false)
+        return
+      }
+
       onLoginSuccess(adminDoc.id, adminData.role)
     } catch (err: any) {
       setError('Failed to login. Please check your connection.')
@@ -89,8 +97,8 @@ export default function AdminLogin({ onLoginSuccess }: AdminLoginProps) {
       <div className="logo">
         <img src="/Steamreublic.png" alt="Steam Republic" className="logo-image" />
       </div>
-      <h1>Admin Access</h1>
-      <p className="tagline">Staff & Management Portal</p>
+      <h1>{isDashboardAccess ? 'Dashboard Access' : 'Admin Access'}</h1>
+      <p className="tagline">{isDashboardAccess ? 'Owner credentials required' : 'Staff & Management Portal'}</p>
 
       <div className="admin-login-form">
         <div className="form-group">

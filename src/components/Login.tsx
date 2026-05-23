@@ -7,6 +7,7 @@ interface LoginProps {
   onLoginSuccess: (userId: string) => void
   onSwitchToSignup: () => void
   onAdminAccess: () => void
+  onHome?: () => void
 }
 
 export default function Login({ onLoginSuccess, onSwitchToSignup, onAdminAccess }: LoginProps) {

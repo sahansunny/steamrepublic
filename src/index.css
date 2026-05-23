@@ -98,9 +98,25 @@ body::before {
   z-index: 1;
 }
 
+/* HomePage breaks out of the constrained #root to fill the full viewport */
+#root:has(.hp) {
+  max-width: none;
+  width: 100%;
+  padding: 0;
+}
+
+body:has(.hp) {
+  padding: 0;
+}
+
 @media (min-width: 768px)  { body { padding: 28px; } #root { max-width: 600px; } }
 @media (min-width: 1024px) { body { padding: 40px; } #root { max-width: 680px; } }
 @media (min-width: 1440px) { #root { max-width: 740px; } }
+
+/* Override back to full-width when HomePage is present */
+@media (min-width: 768px)  { body:has(.hp) { padding: 0; } #root:has(.hp) { max-width: none; } }
+@media (min-width: 1024px) { body:has(.hp) { padding: 0; } #root:has(.hp) { max-width: none; } }
+@media (min-width: 1440px) { #root:has(.hp) { max-width: none; } }
 @media (max-width: 380px)  { body { padding: 14px; } }
 
 /* ─── Typography defaults ─── */

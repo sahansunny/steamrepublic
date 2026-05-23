@@ -7,6 +7,7 @@ interface AdminPanelProps {
   onBack: () => void
   onStaffDashboard: () => void
   adminRole: string
+  onHome?: () => void
 }
 
 export default function AdminPanel({ onAddCoins, onBack, onStaffDashboard, adminRole }: AdminPanelProps) {
