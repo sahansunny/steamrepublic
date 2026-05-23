@@ -136,8 +136,26 @@ export default function HomePage({ onLogin, onSignup, onDashboard }: HomePagePro
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.touchAction = 'none'
+    } else {
+      document.body.style.overflow = ''
+      document.body.style.touchAction = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+      document.body.style.touchAction = ''
+    }
+  }, [menuOpen])
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && menuOpen) setMenuOpen(false)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
   }, [menuOpen])
 
   // Handle scroll to section
@@ -261,26 +279,28 @@ export default function HomePage({ onLogin, onSignup, onDashboard }: HomePagePro
             {menuOpen ? <IconClose /> : <IconMenu />}
           </button>
         </div>
+      </nav>
 
-        {/* Overlay backdrop */}
-        <div 
-          className={`hp-nav__overlay${menuOpen ? ' hp-nav__overlay--visible' : ''}`}
+      {/* Overlay — outside nav to cover full screen */}
+      {menuOpen && (
+        <div
+          className="hp-nav__overlay hp-nav__overlay--visible"
           onClick={() => setMenuOpen(false)}
           aria-hidden="true"
         />
+      )}
 
-        {/* Mobile drawer */}
-        <div className={`hp-nav__drawer${menuOpen ? ' hp-nav__drawer--open' : ''}`} aria-hidden={!menuOpen}>
-          <div className="hp-nav__drawer-inner">
-            <a href="#hp-features" className="hp-nav__drawer-link" onClick={(e) => { e.preventDefault(); scrollToSection('hp-features') }}>About</a>
-            <a href="#hp-how-it-works" className="hp-nav__drawer-link" onClick={(e) => { e.preventDefault(); scrollToSection('hp-how-it-works') }}>How it Works</a>
-            <div className="hp-nav__drawer-ctas">
-              <button className="hp-btn hp-btn--ghost" onClick={() => { setMenuOpen(false); onLogin() }} tabIndex={menuOpen ? 0 : -1}>Login</button>
-              <button className="hp-btn hp-btn--gold"  onClick={() => { setMenuOpen(false); onDashboard() }} tabIndex={menuOpen ? 0 : -1}>Dashboard</button>
-            </div>
+      {/* Mobile drawer — outside nav to avoid clipping */}
+      <div className={`hp-nav__drawer${menuOpen ? ' hp-nav__drawer--open' : ''}`} aria-hidden={!menuOpen} role="dialog" aria-modal="true">
+        <div className="hp-nav__drawer-inner">
+          <a href="#hp-features" className="hp-nav__drawer-link" onClick={(e) => { e.preventDefault(); scrollToSection('hp-features') }}>About</a>
+          <a href="#hp-how-it-works" className="hp-nav__drawer-link" onClick={(e) => { e.preventDefault(); scrollToSection('hp-how-it-works') }}>How it Works</a>
+          <div className="hp-nav__drawer-ctas">
+            <button className="hp-btn hp-btn--ghost" onClick={() => { setMenuOpen(false); onLogin() }} tabIndex={menuOpen ? 0 : -1}>Login</button>
+            <button className="hp-btn hp-btn--gold"  onClick={() => { setMenuOpen(false); onDashboard() }} tabIndex={menuOpen ? 0 : -1}>Dashboard</button>
           </div>
         </div>
-      </nav>
+      </div>
 
       {/* ══════════════════════════════════════════
           HERO

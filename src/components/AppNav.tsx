@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import './AppNav.css'
 
 interface AppNavProps {
@@ -26,6 +26,7 @@ const IconClose = () => (
 export default function AppNav({ onHome, onLogin, onSignup, isLoggedIn, isAdmin, userName, onLogout }: AppNavProps) {
   const [menuOpen, setMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const drawerRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const handleScroll = () => setScrolled(window.scrollY > 40)
@@ -33,72 +34,102 @@ export default function AppNav({ onHome, onLogin, onSignup, isLoggedIn, isAdmin,
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  // Lock body scroll when drawer is open
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => { document.body.style.overflow = '' }
+    if (menuOpen) {
+      document.body.style.overflow = 'hidden'
+      document.body.style.touchAction = 'none'
+    } else {
+      document.body.style.overflow = ''
+      document.body.style.touchAction = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+      document.body.style.touchAction = ''
+    }
+  }, [menuOpen])
+
+  // Close on Escape key
+  useEffect(() => {
+    const handleKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && menuOpen) setMenuOpen(false)
+    }
+    window.addEventListener('keydown', handleKey)
+    return () => window.removeEventListener('keydown', handleKey)
   }, [menuOpen])
 
   const close = () => setMenuOpen(false)
 
   return (
-    <nav className={`app-nav${scrolled ? ' app-nav--solid' : ''}`} role="navigation" aria-label="Main navigation">
-      <div className="app-nav__wrap">
+    <>
+      <nav className={`app-nav${scrolled ? ' app-nav--solid' : ''}`} role="navigation" aria-label="Main navigation">
+        <div className="app-nav__wrap">
 
-        {/* Brand / Home */}
-        <button className="app-nav__brand" onClick={() => { close(); onHome() }} aria-label="Steam Republic — go to home">
-          <div className="app-nav__brand-ring">
-            <img src="/Steamreublic.png" alt="" className="app-nav__brand-img" width="32" height="32" aria-hidden="true" />
+          {/* Brand / Home */}
+          <button className="app-nav__brand" onClick={() => { close(); onHome() }} aria-label="Steam Republic — go to home">
+            <div className="app-nav__brand-ring">
+              <img src="/Steamreublic.png" alt="" className="app-nav__brand-img" width="32" height="32" aria-hidden="true" />
+            </div>
+            <span className="app-nav__brand-name">Steam Republic</span>
+          </button>
+
+          {/* Desktop CTAs */}
+          <div className="app-nav__ctas">
+            {isLoggedIn || isAdmin ? (
+              <>
+                {userName && <span className="app-nav__user">👋 {userName}</span>}
+                {onLogout && (
+                  <button className="app-nav__btn app-nav__btn--ghost" onClick={onLogout}>
+                    Logout
+                  </button>
+                )}
+              </>
+            ) : (
+              <>
+                {onLogin && (
+                  <button className="app-nav__btn app-nav__btn--ghost" onClick={() => { close(); onLogin() }}>
+                    Login
+                  </button>
+                )}
+                {onSignup && (
+                  <button className="app-nav__btn app-nav__btn--gold" onClick={() => { close(); onSignup() }}>
+                    Get Started
+                  </button>
+                )}
+              </>
+            )}
           </div>
-          <span className="app-nav__brand-name">Steam Republic</span>
-        </button>
 
-        {/* Desktop CTAs */}
-        <div className="app-nav__ctas">
-          {isLoggedIn || isAdmin ? (
-            <>
-              {userName && <span className="app-nav__user">👋 {userName}</span>}
-              {onLogout && (
-                <button className="app-nav__btn app-nav__btn--ghost" onClick={onLogout}>
-                  Logout
-                </button>
-              )}
-            </>
-          ) : (
-            <>
-              {onLogin && (
-                <button className="app-nav__btn app-nav__btn--ghost" onClick={() => { close(); onLogin() }}>
-                  Login
-                </button>
-              )}
-              {onSignup && (
-                <button className="app-nav__btn app-nav__btn--gold" onClick={() => { close(); onSignup() }}>
-                  Get Started
-                </button>
-              )}
-            </>
-          )}
+          {/* Mobile hamburger */}
+          <button
+            className="app-nav__toggle"
+            onClick={() => setMenuOpen(v => !v)}
+            aria-expanded={menuOpen}
+            aria-label={menuOpen ? 'Close menu' : 'Open menu'}
+          >
+            {menuOpen ? <IconClose /> : <IconMenu />}
+          </button>
         </div>
+      </nav>
 
-        {/* Mobile hamburger */}
-        <button
-          className="app-nav__toggle"
-          onClick={() => setMenuOpen(v => !v)}
-          aria-expanded={menuOpen}
-          aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-        >
-          {menuOpen ? <IconClose /> : <IconMenu />}
-        </button>
-      </div>
+      {/* Overlay — rendered outside nav so it covers the full screen */}
+      {menuOpen && (
+        <div
+          className="app-nav__overlay app-nav__overlay--visible"
+          onClick={close}
+          aria-hidden="true"
+        />
+      )}
 
-      {/* Overlay backdrop */}
-      <div 
-        className={`app-nav__overlay${menuOpen ? ' app-nav__overlay--visible' : ''}`}
-        onClick={close}
-        aria-hidden="true"
-      />
-
-      {/* Mobile drawer */}
-      <div className={`app-nav__drawer${menuOpen ? ' app-nav__drawer--open' : ''}`} aria-hidden={!menuOpen}>
+      {/* Drawer — rendered outside nav to avoid clipping */}
+      <div
+        ref={drawerRef}
+        className={`app-nav__drawer${menuOpen ? ' app-nav__drawer--open' : ''}`}
+        aria-hidden={!menuOpen}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Navigation menu"
+      >
         <div className="app-nav__drawer-inner">
           <button
             className="app-nav__drawer-link"
@@ -145,6 +176,6 @@ export default function AppNav({ onHome, onLogin, onSignup, isLoggedIn, isAdmin,
           )}
         </div>
       </div>
-    </nav>
+    </>
   )
 }
